@@ -1,0 +1,81 @@
+name: Build and release
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+
+# Serialize releases so two pushes cannot publish the same version together.
+concurrency:
+  group: release-master
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v5
+
+      - name: Build the mod
+        run: bash ./gradlew clean build --no-daemon --console=plain
+
+      - name: Check whether this version is already released
+        id: release
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const gradle = fs.readFileSync('build.gradle', 'utf8');
+            const version = gradle.match(/^version\s*=\s*'([^']+)'/m)?.[1];
+            if (!version || !/^\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?$/.test(version)) {
+              throw new Error("Set a valid version = 'x.y.z' in build.gradle.");
+            }
+            const tag = `v${version}`;
+            try {
+              const { data } = await github.rest.repos.getReleaseByTag({ ...context.repo, tag });
+              if (data.draft) throw new Error(`${tag} has an unfinished draft. Review it before retrying.`);
+              core.info(`${tag} is already published. Bump version in build.gradle for the next release.`);
+              return;
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+            // Never attach a new build to a pre-existing tag from a different commit.
+            try {
+              await github.rest.git.getRef({ ...context.repo, ref: `tags/${tag}` });
+              throw new Error(`${tag} already exists without a release. Review the tag before retrying.`);
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+            const jar = `build/libs/mlmanimator-${version}.jar`;
+            const bytes = fs.readFileSync(jar);
+            if (!bytes.length) throw new Error('The release jar is empty.');
+            const checksum = require('crypto').createHash('sha256').update(bytes).digest('hex');
+            fs.writeFileSync(`${jar}.sha256`, `${checksum}  mlmanimator-${version}.jar\n`);
+            core.setOutput('version', version);
+            core.setOutput('publish', 'true');
+
+      - name: Create the version tag and publish the release
+        if: steps.release.outputs.publish == 'true'
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ steps.release.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          name: MLM Animator ${{ steps.release.outputs.version }}
+          generate_release_notes: true
+          prerelease: ${{ contains(steps.release.outputs.version, '-') }}
+          fail_on_unmatched_files: true
+          files: |
+            build/libs/mlmanimator-${{ steps.release.outputs.version }}.jar
+            build/libs/mlmanimator-${{ steps.release.outputs.version }}.jar.sha256
