@@ -13,8 +13,8 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 
-public class TextureHandler
-{
+public class TextureHandler {
+
     public static final String PLAYER_SKIN = "PLAYERSKIN";
     public static final String HEAD_ARMOR = "HEADARMOR";
     public static final String CHEST_ARMOR = "CHESTARMOR";
@@ -32,25 +32,24 @@ public class TextureHandler
     HashMap<String, ResourceLocation> textures = new HashMap<String, ResourceLocation>();
     HashMap<String, Vec3> textureColor = new HashMap<String, Vec3>();
 
-    public void addTexture(String name, ResourceLocation location)
-    {
+    public void addTexture(String name, ResourceLocation location) {
         textures.put(name, location);
     }
 
-    public ResourceLocation getTexture(String name)
-    {
-        if (textures.containsKey(name))
+    public ResourceLocation getTexture(String name) {
+        if (textures.containsKey(name)) {
             return textures.get(name);
+        }
 
         return null;
     }
 
-    public ResourceLocation getSmallTexture(String name)
-    {
+    public ResourceLocation getSmallTexture(String name) {
         ResourceLocation bigTex = getTexture(name);
 
-        if (bigTex == null)
+        if (bigTex == null) {
             return null;
+        }
 
         // Append the word small to the start of the file name
         String location = bigTex.getPath();
@@ -60,16 +59,14 @@ public class TextureHandler
         return new ResourceLocation(bigTex.getNamespace(), location);
     }
 
-    public void clearTextures()
-    {
+    public void clearTextures() {
         textures.clear();
         textureColor.clear();
 
         addTexture(BLANK, BLANK_LOCATION);
     }
 
-    public void updateArmorTextures(AbstractClientPlayer player)
-    {
+    public void updateArmorTextures(AbstractClientPlayer player) {
         addTexture(PLAYER_SKIN, player.getSkinTextureLocation());
         addTexture(HEAD_ARMOR, (getArmorResource(player, EquipmentSlot.HEAD)));
         addColor(HEAD_ARMOR, getArmorColor(player, EquipmentSlot.HEAD));
@@ -84,68 +81,66 @@ public class TextureHandler
         updateElytraTextures(player);
     }
 
-    protected void updateElytraTextures(AbstractClientPlayer player)
-    {
+    protected void updateElytraTextures(AbstractClientPlayer player) {
         ResourceLocation elytraTexture;
 
-        if (player.isElytraLoaded() && player.getElytraTextureLocation() != null)
+        if (player.isElytraLoaded() && player.getElytraTextureLocation() != null) {
             elytraTexture = player.getElytraTextureLocation();
-        else if (player.isCapeLoaded() && player.getCloakTextureLocation() != null && player.isModelPartShown(PlayerModelPart.CAPE))
+        } else if (player.isCapeLoaded() && player.getCloakTextureLocation() != null && player.isModelPartShown(PlayerModelPart.CAPE)) {
             elytraTexture = player.getCloakTextureLocation();
-        else
+        } else {
             elytraTexture = ELYTRA_WINGS_LOCATION;
+        }
 
         addTexture(TextureHandler.ELYTRA, elytraTexture);
     }
 
-    protected void updateCloakTextures(AbstractClientPlayer player)
-    {
-        if (player.getCloakTextureLocation() != null)
+    protected void updateCloakTextures(AbstractClientPlayer player) {
+        if (player.getCloakTextureLocation() != null) {
             addTexture(TextureHandler.CLOAK, player.getCloakTextureLocation());
+        }
     }
 
-    public void addColor(String name, Vec3 color)
-    {
-        if (color == null)
+    public void addColor(String name, Vec3 color) {
+        if (color == null) {
             textureColor.remove(name);
-        else
+        } else {
             textureColor.put(name, color);
+        }
     }
 
-    public Vec3 getColor(String name)
-    {
-        if (textureColor.containsKey(name))
+    public Vec3 getColor(String name) {
+        if (textureColor.containsKey(name)) {
             return textureColor.get(name);
+        }
 
         return blankColor;
     }
 
-    public Vec3 getArmorColor(AbstractClientPlayer player, EquipmentSlot slot)
-    {
+    public Vec3 getArmorColor(AbstractClientPlayer player, EquipmentSlot slot) {
         ItemStack stack = player.getItemBySlot(slot);
 
-        if (stack.getItem() instanceof net.minecraft.world.item.DyeableLeatherItem)
-        {
-            int color = ((net.minecraft.world.item.DyeableLeatherItem)stack.getItem()).getColor(stack);
-            float r = (float)(color >> 16 & 255) / 255.0F;
-            float g = (float)(color >> 8 & 255) / 255.0F;
-            float b = (float)(color & 255) / 255.0F;
+        if (stack.getItem() instanceof net.minecraft.world.item.DyeableLeatherItem) {
+            int color = ((net.minecraft.world.item.DyeableLeatherItem) stack.getItem()).getColor(stack);
+            float r = (float) (color >> 16 & 255) / 255.0F;
+            float g = (float) (color >> 8 & 255) / 255.0F;
+            float b = (float) (color & 255) / 255.0F;
 
             return new Vec3(r, g, b);
-        }
-        else
+        } else {
             return null;
+        }
     }
 
     // Ripped pretty much completely from HumanoidArmorLayer
-    public static ResourceLocation getArmorResource(Player entity, EquipmentSlot slot)
-    {
+    public static ResourceLocation getArmorResource(Player entity, EquipmentSlot slot) {
         ItemStack stack = entity.getItemBySlot(slot);
 
-        if (!(stack.getItem() instanceof ArmorItem))
+        if (!(stack.getItem() instanceof ArmorItem)) {
             return null;
+        }
 
-        ArmorItem item = (ArmorItem)stack.getItem();
+        ArmorItem item = (ArmorItem) stack.getItem();
         String texture = item.getMaterial().getName();
         String domain = "minecraft";
         int idx = texture.indexOf(':');
@@ -155,17 +150,15 @@ public class TextureHandler
         }
 
         int inner = 1;
-        if (slot == EquipmentSlot.LEGS)
+        if (slot == EquipmentSlot.LEGS) {
             inner = 2;
+        }
 
         String s1 = String.format(java.util.Locale.ROOT, "%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, inner, "");
 
-        try
-        {
+        try {
             s1 = net.minecraftforge.client.ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, "");
-        }
-        catch (NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             return null;
         }
 

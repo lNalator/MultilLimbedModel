@@ -39,8 +39,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-public class MultiLimbedRenderer
-{
+public class MultiLimbedRenderer {
+
     // Yeah, I know this is an AWFUL way to do things
     // It's a hack to get around the base ModelRenderer render function being full of protected variables
     protected static MultiBufferSource currentBuffer;
@@ -67,8 +67,7 @@ public class MultiLimbedRenderer
     protected static boolean enableFullBodyFirstPerson = true;
     public static boolean enableFirstPersonHands = false;
 
-    public static void setup()
-    {
+    public static void setup() {
         // thirdPerson / detached   - m - f_90560_
         thirdPersonField = ObfuscationReflectionHelper.findField(Camera.class, "f_90560_");
         // setPosition  - b - m_90584_
@@ -79,52 +78,48 @@ public class MultiLimbedRenderer
         // moveTowardsClosestSpace  - b - m_108704_
         moveTowardsClosestSpaceFunction = ObfuscationReflectionHelper.findMethod(LocalPlayer.class, "m_108704_", double.class, double.class);
 
-
         // layers - h - f_115291_
-        layers = ObfuscationReflectionHelper.findField(LivingEntityRenderer.class,"f_115291_");
+        layers = ObfuscationReflectionHelper.findField(LivingEntityRenderer.class, "f_115291_");
         // model - a - f_117290_
-        parrotModel = ObfuscationReflectionHelper.findField(ParrotOnShoulderLayer.class,"f_117290_");
+        parrotModel = ObfuscationReflectionHelper.findField(ParrotOnShoulderLayer.class, "f_117290_");
 
         // skullModels - d - f_174473_
-        skullModels = ObfuscationReflectionHelper.findField(CustomHeadLayer.class,"f_174473_");
+        skullModels = ObfuscationReflectionHelper.findField(CustomHeadLayer.class, "f_174473_");
 
         // skullModels - d - f_174473_
-        buffers = ObfuscationReflectionHelper.findField(LevelRenderer.class,"f_109464_");
+        buffers = ObfuscationReflectionHelper.findField(LevelRenderer.class, "f_109464_");
 
         enableFullBodyFirstPerson = Config.Client.enableFullBodyFirstPerson.get();
         enableFirstPersonHands = Config.Client.vanillaHands();
 
     }
 
-    public static void rotateCamera(ViewportEvent.ComputeCameraAngles event)
-    {
-        if (!fakeThird)
+    public static void rotateCamera(ViewportEvent.ComputeCameraAngles event) {
+        if (!fakeThird) {
             return;
+        }
 
         AbstractClientPlayer player = Minecraft.getInstance().player;
         PlayerPoseHandler handler = PoseHandler.getPlayerPoseHandler(player.getUUID());
 
-        if (handler == null)
+        if (handler == null) {
             return;
+        }
 
         // Adjust the camera pitch based on the direction of the models viewPoint
         double pitch = handler.getPlayerModel().getViewPoint().getNotLookingPitch();
         double oldPitch = handler.getPlayerModel().getViewPoint().getOldNotLookingPitch();
 
-        event.setPitch(event.getPitch() + (float)Mth.lerp(event.getPartialTick(), oldPitch, pitch));
+        event.setPitch(event.getPitch() + (float) Mth.lerp(event.getPartialTick(), oldPitch, pitch));
 
     }
 
-    public static boolean isSlim(PlayerModel model)
-    {
+    public static boolean isSlim(PlayerModel model) {
         boolean slim;
 
-        try
-        {
+        try {
             slim = slimField.getBoolean(model);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             mlmanimator.LOGGER.error("Error acquiring model slimness");
             return false;
         }
@@ -133,24 +128,22 @@ public class MultiLimbedRenderer
     }
 
     // Toggle on the third person boolean in Camera to allow the player model to be drawn even when in first person
-    public static boolean fakeThirdPersonOn()
-    {
-        if (!enableFullBodyFirstPerson)
+    public static boolean fakeThirdPersonOn() {
+        if (!enableFullBodyFirstPerson) {
             return false;
+        }
 
         Camera rendererInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
 
-        if (rendererInfo.isDetached())
+        if (rendererInfo.isDetached()) {
             return false;
+        }
 
         fakeThird = true;
 
-        try
-        {
+        try {
             thirdPersonField.setBoolean(rendererInfo, true);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             mlmanimator.LOGGER.error("Error adjusting third person toggle");
             return false;
         }
@@ -158,48 +151,40 @@ public class MultiLimbedRenderer
         return true;
     }
 
-    public static void moveTowardsClosestSpace(LocalPlayer player, double x, double z)
-    {
-        try
-        {
+    public static void moveTowardsClosestSpace(LocalPlayer player, double x, double z) {
+        try {
             moveTowardsClosestSpaceFunction.invoke(player, x, z);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             mlmanimator.LOGGER.error("Error calling moveTowardsClosestSpace - " + e);
         }
     }
 
-    public static boolean isFakeThirdPerson()
-    {
+    public static boolean isFakeThirdPerson() {
         return fakeThird;
     }
 
     // Toggle off the third person boolean so that the camera will still render in first person
-    public static void fakeThirdPersonOff()
-    {
-        if (!enableFullBodyFirstPerson)
+    public static void fakeThirdPersonOff() {
+        if (!enableFullBodyFirstPerson) {
             return;
+        }
 
-        if (!fakeThird)
+        if (!fakeThird) {
             return;
+        }
 
         Camera rendererInfo = Minecraft.getInstance().gameRenderer.getMainCamera();
 
-        try
-        {
+        try {
             thirdPersonField.setBoolean(rendererInfo, false);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             mlmanimator.LOGGER.error("Error adjusting third person toggle");
         }
 
         fakeThird = false;
     }
 
-    public static void doModelCalculations(AbstractClientPlayer entityIn, PoseStack PoseStackIn, float partialTicks, PlayerPoseHandler handler)
-    {
+    public static void doModelCalculations(AbstractClientPlayer entityIn, PoseStack PoseStackIn, float partialTicks, PlayerPoseHandler handler) {
         // Push and pop the pose so that these calculations do not effect render position
         PoseStackIn.pushPose();
 
@@ -210,8 +195,7 @@ public class MultiLimbedRenderer
         PoseStackIn.popPose();
     }
 
-    public static void doPose(AbstractClientPlayer entityIn, float partialTicks, PlayerPoseHandler handler)
-    {
+    public static void doPose(AbstractClientPlayer entityIn, float partialTicks, PlayerPoseHandler handler) {
         boolean noCollision = entityIn.level.noCollision(entityIn, entityIn.getBoundingBox());
 
         PoseHandler.doPose(entityIn.getUUID(), partialTicks);
@@ -219,26 +203,23 @@ public class MultiLimbedRenderer
         handler.getPlayerModel().calculateHeightAdjustment(entityIn);
 
         // If the new pose causes a collision then cancel the pose change
-        if (noCollision && !entityIn.level.noCollision(entityIn, entityIn.getBoundingBox()))
-        {
+        if (noCollision && !entityIn.level.noCollision(entityIn, entityIn.getBoundingBox())) {
             PoseHandler.revertPose(entityIn.getUUID());
             handler.getPlayerModel().calculateHeightAdjustment(entityIn);
             handler.collision = true;
         }
     }
 
-    public static ParrotModel getParrotModel(PlayerRenderer render)
-    {
-        try
-        {
-            List<RenderLayer<LivingEntity, EntityModel<LivingEntity>>> layerList = (List<RenderLayer<LivingEntity, EntityModel<LivingEntity>>>)layers.get(render);
+    public static ParrotModel getParrotModel(PlayerRenderer render) {
+        try {
+            List<RenderLayer<LivingEntity, EntityModel<LivingEntity>>> layerList = (List<RenderLayer<LivingEntity, EntityModel<LivingEntity>>>) layers.get(render);
 
-            for (RenderLayer<LivingEntity, EntityModel<LivingEntity>> layer : layerList)
-                if (layer instanceof ParrotOnShoulderLayer)
-                    return (ParrotModel)parrotModel.get(layer);
-        }
-        catch(Exception e)
-        {
+            for (RenderLayer<LivingEntity, EntityModel<LivingEntity>> layer : layerList) {
+                if (layer instanceof ParrotOnShoulderLayer) {
+                    return (ParrotModel) parrotModel.get(layer);
+                }
+            }
+        } catch (Exception e) {
             mlmanimator.LOGGER.error("Error acquiring player's parrot");
             return null;
         }
@@ -246,22 +227,18 @@ public class MultiLimbedRenderer
         return null;
     }
 
-    public static SkullModelBase getSkullModel(PlayerRenderer render, SkullBlock.Type skullType)
-    {
-        try
-        {
-            List<RenderLayer<LivingEntity, EntityModel<LivingEntity>>> layerList = (List<RenderLayer<LivingEntity, EntityModel<LivingEntity>>>)layers.get(render);
+    public static SkullModelBase getSkullModel(PlayerRenderer render, SkullBlock.Type skullType) {
+        try {
+            List<RenderLayer<LivingEntity, EntityModel<LivingEntity>>> layerList = (List<RenderLayer<LivingEntity, EntityModel<LivingEntity>>>) layers.get(render);
 
-            for (RenderLayer<LivingEntity, EntityModel<LivingEntity>> layer : layerList)
-                if (layer instanceof CustomHeadLayer)
-                {
+            for (RenderLayer<LivingEntity, EntityModel<LivingEntity>> layer : layerList) {
+                if (layer instanceof CustomHeadLayer) {
                     Map<SkullBlock.Type, SkullModelBase> skullList = (Map<SkullBlock.Type, SkullModelBase>) skullModels.get(layer);
 
                     return skullList.get(skullType);
                 }
-        }
-        catch(Exception e)
-        {
+            }
+        } catch (Exception e) {
             mlmanimator.LOGGER.error("Error acquiring custom head");
             return null;
         }
@@ -269,39 +246,35 @@ public class MultiLimbedRenderer
         return null;
     }
 
-    public static RenderBuffers getBuffers(LevelRenderer level)
-    {
-        try
-        {
-            return (RenderBuffers)buffers.get(level);
-        }
-        catch(Exception e)
-        {
+    public static RenderBuffers getBuffers(LevelRenderer level) {
+        try {
+            return (RenderBuffers) buffers.get(level);
+        } catch (Exception e) {
             mlmanimator.LOGGER.error("Error acquiring render buffers");
             return null;
         }
     }
 
-    public static void handleLayers(AbstractClientPlayer player, PlayerRenderer renderer)
-    {
+    public static void handleLayers(AbstractClientPlayer player, PlayerRenderer renderer) {
         PlayerPoseHandler handler = PoseHandler.getPlayerPoseHandler(player.getUUID());
         MultiLimbedModel model = handler.getPlayerModel();
 
-        if (model.getParrotModel() == null)
+        if (model.getParrotModel() == null) {
             model.setParrotModel(getParrotModel(renderer));
+        }
 
         model.updateSkull(player, renderer);
     }
 
-    public static boolean renderFirstPerson(AbstractClientPlayer entityIn, float partialTicks, PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn)
-    {
+    public static boolean renderFirstPerson(AbstractClientPlayer entityIn, float partialTicks, PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn) {
         // Pop the view bobbing pose so view bobbing doesn't mess with first person models
         PoseStackIn.popPose();
 
         PlayerPoseHandler handler = PoseHandler.getPlayerPoseHandler(entityIn.getUUID());
 
-        if(!enableFullBodyFirstPerson)
+        if (!enableFullBodyFirstPerson) {
             doModelCalculations(entityIn, PoseStackIn, partialTicks, handler);
+        }
 
         render2FirstPerson(handler.getPlayerModel(), entityIn, partialTicks, PoseStackIn, bufferIn, packedLightIn);
 
@@ -314,25 +287,23 @@ public class MultiLimbedRenderer
         return !enableFirstPersonHands;
     }
 
-    public static boolean shouldRenderHands()
-    {
+    public static boolean shouldRenderHands() {
         return enableFirstPersonHands;
     }
 
-    public static void adjustEyeHeight(AbstractClientPlayer player, PlayerPoseHandler handler)
-    {
+    public static void adjustEyeHeight(AbstractClientPlayer player, PlayerPoseHandler handler) {
         float oldHeight = player.getEyeHeight();
 
         float eyeHeight = handler.getPlayerModel().getEyeHeight() * -1;
 
         Reflection.adjustEyeHeight(player, eyeHeight);
 
-        if (oldHeight != player.getEyeHeight())
+        if (oldHeight != player.getEyeHeight()) {
             PacketHandler.sendEyeHeightToServer(eyeHeight);
+        }
     }
 
-    public static void render2FirstPerson(MultiLimbedModel entityModel, AbstractClientPlayer entityIn, float partialTicks, PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn)
-    {
+    public static void render2FirstPerson(MultiLimbedModel entityModel, AbstractClientPlayer entityIn, float partialTicks, PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn) {
         PoseStackIn.pushPose();
 
         PoseStackIn.scale(-1.0F, -1.0F, 1.0F);
@@ -343,8 +314,7 @@ public class MultiLimbedRenderer
 
         RenderType rendertype = getRenderType(getSkin(currentEntity));
 
-        if (rendertype != null)
-        {
+        if (rendertype != null) {
             int i = LivingEntityRenderer.getOverlayCoords(entityIn, 0);
             entityModel.renderFirstPerson(PoseStackIn, packedLightIn, i, 1.0F, 1.0F, 1.0F, 1.0F);
         }
@@ -352,34 +322,36 @@ public class MultiLimbedRenderer
         PoseStackIn.popPose();
     }
 
-    public static boolean render(AbstractClientPlayer entityIn, float partialTicks, PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn, boolean inInventory)
-    {
+    public static boolean render(AbstractClientPlayer entityIn, float partialTicks, PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn, boolean inInventory) {
         // Toggle off fake third person if this isn't the player entity
         boolean rememberingFake = isFakeThirdPerson();
-        if (rememberingFake && entityIn.getUUID().compareTo(Minecraft.getInstance().player.getUUID()) != 0)
+        if (rememberingFake && entityIn.getUUID().compareTo(Minecraft.getInstance().player.getUUID()) != 0) {
             fakeThirdPersonOff();
+        }
 
         PlayerPoseHandler handler = PoseHandler.getPlayerPoseHandler(entityIn.getUUID());
 
         boolean hideHands = shouldRenderHands();
 
-        if (!rememberingFake || entityIn.getUUID().compareTo(Minecraft.getInstance().player.getUUID()) != 0 || inInventory)
+        if (!rememberingFake || entityIn.getUUID().compareTo(Minecraft.getInstance().player.getUUID()) != 0 || inInventory) {
             hideHands = false;
+        }
 
         render2(handler, entityIn, partialTicks, PoseStackIn, bufferIn, packedLightIn, hideHands, inInventory);
 
-        if (!inInventory)
+        if (!inInventory) {
             adjustEyeHeight(entityIn, handler);
+        }
 
         // Toggle fake third person back on if necessary
-        if (rememberingFake)
+        if (rememberingFake) {
             fakeThirdPersonOn();
+        }
 
         return true;
     }
 
-    public static void render2(PlayerPoseHandler handler, AbstractClientPlayer entityIn, float partialTicks, PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn, boolean hideHands, boolean inInventory)
-    {
+    public static void render2(PlayerPoseHandler handler, AbstractClientPlayer entityIn, float partialTicks, PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn, boolean hideHands, boolean inInventory) {
         PoseStackIn.pushPose();
 
         MultiLimbedModel entityModel = handler.getPlayerModel();
@@ -392,9 +364,8 @@ public class MultiLimbedRenderer
         float f1 = Mth.rotLerp(partialTicks, entityIn.yHeadRotO, entityIn.yHeadRot);
 
         float f2 = f1 - f;
-        if (shouldSit && entityIn.getVehicle() instanceof LivingEntity)
-        {
-            LivingEntity livingentity = (LivingEntity)entityIn.getVehicle();
+        if (shouldSit && entityIn.getVehicle() instanceof LivingEntity) {
+            LivingEntity livingentity = (LivingEntity) entityIn.getVehicle();
             f = Mth.rotLerp(partialTicks, livingentity.yBodyRotO, livingentity.yBodyRot);
             f2 = f1 - f;
             float f3 = Mth.wrapDegrees(f2);
@@ -428,11 +399,11 @@ public class MultiLimbedRenderer
         entityModel.setupAnim(f2, f6);
 
         // Do not update the pose handler if in inventory
-        if (!inInventory)
+        if (!inInventory) {
             doPose(entityIn, partialTicks, handler);
+        }
 
         double height = entityModel.getHeightAdjustment();
-
 
         PoseStackIn.scale(-1.0F, -1.0F, 1.0F);
         PoseStackIn.translate(0.0D, 0 - height, 0.0D);
@@ -452,10 +423,9 @@ public class MultiLimbedRenderer
 
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
-        entityModel.renderShoulder(PoseStackIn, bufferSource, packedLightIn,1.0F, 1.0F, 1.0F, 1.0F, entityIn.tickCount);
+        entityModel.renderShoulder(PoseStackIn, bufferSource, packedLightIn, 1.0F, 1.0F, 1.0F, 1.0F, entityIn.tickCount);
 
-        if (!hideHands)
-        {
+        if (!hideHands) {
             entityModel.renderHandItem(false, 0, entityIn, entityIn.getMainHandItem(), PoseStackIn, bufferSource, packedLightIn);
             entityModel.renderHandItem(true, 1, entityIn, entityIn.getOffhandItem(), PoseStackIn, bufferSource, packedLightIn);
         }
@@ -465,13 +435,10 @@ public class MultiLimbedRenderer
         PoseStackIn.popPose();
     }
 
-    protected static void renderModel(MultiLimbedModel entityModel, AbstractClientPlayer entityIn, PoseStack PoseStackIn, int packedLightIn, RenderType rendertype)
-    {
-        if (rendertype != null)
-        {
+    protected static void renderModel(MultiLimbedModel entityModel, AbstractClientPlayer entityIn, PoseStack PoseStackIn, int packedLightIn, RenderType rendertype) {
+        if (rendertype != null) {
             // Push the model back so it's not directly below the camera in first person
-            if (MultiLimbedRenderer.isFakeThirdPerson() && entityIn.getUUID().compareTo(Minecraft.getInstance().player.getUUID()) == 0)
-            {
+            if (MultiLimbedRenderer.isFakeThirdPerson() && entityIn.getUUID().compareTo(Minecraft.getInstance().player.getUUID()) == 0) {
                 Vec3 pushBack = getCameraDistance();
                 PoseStackIn.translate(pushBack.x, pushBack.y, pushBack.z);
             } else {
@@ -482,15 +449,15 @@ public class MultiLimbedRenderer
             int i = LivingEntityRenderer.getOverlayCoords(entityIn, 0);
 
             // Cancel out the vanilla model repositioning when crouching
-            if (entityIn.isCrouching())
+            if (entityIn.isCrouching()) {
                 PoseStackIn.translate(0, -0.125, 0);
+            }
 
             entityModel.render(PoseStackIn, packedLightIn, i, 1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
 
-    public static Vec3 getCameraDistance()
-    {
+    public static Vec3 getCameraDistance() {
         // TODO: This only works if the head is attached directly to the body
         double xlocation = currentModel.getViewPoint().getRotationPoint().x;
         double zlocation = currentModel.getViewPoint().getRotationPoint().z;
@@ -498,21 +465,18 @@ public class MultiLimbedRenderer
         // Convert the yBody rotation to a value between 0-360
         float angle = Mth.wrapDegrees(Minecraft.getInstance().player.yBodyRot);
 
-
         // Flip the depth and width around if the body is facing to the left or right
         double zDistance = currentModel.getSize().getDepth();
         double xDistance = currentModel.getSize().getWidth();
 
         // TODO: ...these angles seem wrong, but it's what is necessary for it to work properly. Perhaps something is borked somewhere else...
-        if ((angle > 45 && angle < 135) || (angle > -180 && angle < -135))
-        {
+        if ((angle > 45 && angle < 135) || (angle > -180 && angle < -135)) {
             zDistance = currentModel.getSize().getWidth();
             xDistance = currentModel.getSize().getDepth();
         }
 
         zDistance *= zlocation;
         xDistance *= xlocation;
-
 
         // This would be nice if this was moving the camera, but causes to much obvious movement when moving the model
         /*
@@ -531,19 +495,16 @@ public class MultiLimbedRenderer
         double distance = zDistance * (1-xzMixer);
 
         return new Vec3(negxDistance, 0, distance);*/
-
         return new Vec3(0, 0, zDistance);
     }
 
     // Returns the vertex builder for the current entity
-    public static VertexConsumer getVertexBuilder()
-    {
+    public static VertexConsumer getVertexBuilder() {
         return getVertexBuilder(getSkin(currentEntity));
     }
 
     // Returns the vertex builder for the current entity using the supplied skin
-    public static VertexConsumer getVertexBuilder(ResourceLocation resourceLocation)
-    {
+    public static VertexConsumer getVertexBuilder(ResourceLocation resourceLocation) {
         // If the last vertexbuilder call used the same skin, then don't bother recreating it
         RenderType rendertype = getRenderType(resourceLocation);
         currentVertexBuilder = currentBuffer.getBuffer(rendertype);
@@ -551,23 +512,18 @@ public class MultiLimbedRenderer
         return currentVertexBuilder;
     }
 
-    public static RenderType getRenderType(ResourceLocation resourcelocation)
-    {
+    public static RenderType getRenderType(ResourceLocation resourcelocation) {
         boolean invis = currentEntity.isInvisible();
         boolean visible = !invis && !currentEntity.isInvisibleTo(Minecraft.getInstance().player);
 
-        if (visible)
-        {
+        if (visible) {
             return currentModel.renderType(resourcelocation);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
-    public static ResourceLocation getSkin(AbstractClientPlayer EntityIn)
-    {
+    public static ResourceLocation getSkin(AbstractClientPlayer EntityIn) {
         return EntityIn.getSkinTextureLocation();
     }
 

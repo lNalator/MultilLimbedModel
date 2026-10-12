@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class ArmPose extends PlayerPose
-{
+public class ArmPose extends PlayerPose {
+
     public static String upperArm = "PoseUpperArm";
     public static String lowerArm = "PoseLowerArm";
 
@@ -18,129 +18,119 @@ public class ArmPose extends PlayerPose
     Boolean mirror = false;
     Boolean holding = false;
 
-    public void setUpperArm(String newUpper)
-    {
+    public void setUpperArm(String newUpper) {
         upperArmLimb = newUpper;
     }
 
-    public void setLowerArm(String newLower)
-    {
+    public void setLowerArm(String newLower) {
         lowerArmLimb = newLower;
     }
 
-    public void setMirrored(boolean on)
-    {
+    public void setMirrored(boolean on) {
         mirror = on;
     }
 
-    public void setHolding(boolean on)
-    {
+    public void setHolding(boolean on) {
         holding = on;
     }
 
-    protected String limbConvert(String limb)
-    {
-        if (limb.compareTo(upperArmLimb) == 0)
-        {
+    protected String limbConvert(String limb) {
+        if (limb.compareTo(upperArmLimb) == 0) {
 
-            if (upperArmLimb.compareTo(lowerArmLimb) == 0 && !super.angles.containsKey(upperArm))
+            if (upperArmLimb.compareTo(lowerArmLimb) == 0 && !super.angles.containsKey(upperArm)) {
                 return lowerArm;
+            }
 
             return upperArm;
-        }
-        else if (limb.compareTo(lowerArmLimb) == 0)
+        } else if (limb.compareTo(lowerArmLimb) == 0) {
             return lowerArm;
+        }
 
         return limb;
     }
 
-    public float getAnimationSpeed(String limb, int frame)
-    {
+    public float getAnimationSpeed(String limb, int frame) {
         return super.getAnimationSpeed(limbConvert(limb), frame);
     }
 
     // Check if an angle for this limb exists
-    public boolean hasAngle(String limb)
-    {
+    public boolean hasAngle(String limb) {
         return super.hasAngle(limbConvert(limb));
     }
 
     // Get the angle of the current frame for the specified limb
-    public Vec3 getAngle(String limb, int frame)
-    {
+    public Vec3 getAngle(String limb, int frame) {
         Vec3 angle = super.getAngle(limbConvert(limb), frame);
 
         // TODO: This may need to be adjusted
-        if (mirror)
+        if (mirror) {
             angle = angle.multiply(1, -1, -1);
+        }
 
         return angle;
     }
 
     // Get the angle of the first frame for the specified limb
-    public Vec3 getAngle(String limb)
-    {
+    public Vec3 getAngle(String limb) {
         return getAngle(limbConvert(limb), 0);
     }
 
     // Get the number of frames stored in the specified limb
-    public int getFrames(String limb)
-    {
+    public int getFrames(String limb) {
         return super.getFrames(limbConvert(limb));
     }
 
-    public int getPriority(String limb)
-    {
+    public int getPriority(String limb) {
         return super.getPriority(limbConvert(limb));
     }
 
     // Returns a list of all limbs used in this pose
-    public Set<String> getLimbs()
-    {
+    public Set<String> getLimbs() {
         TreeSet<String> limbs = new TreeSet<String>();
 
-        for (String limb : super.getLimbs())
-        {
-            if (limb.compareTo(upperArm) == 0)
+        for (String limb : super.getLimbs()) {
+            if (limb.compareTo(upperArm) == 0) {
                 limbs.add(upperArmLimb);
-            else if (limb.compareTo(lowerArm) == 0)
+            } else if (limb.compareTo(lowerArm) == 0) {
                 limbs.add(lowerArmLimb);
-            else
+            } else {
                 limbs.add(limb);
+            }
         }
 
         return limbs;
     }
 
     // Get all angle frames for the specified limb
-    public ArrayList<Vec3> getAngles(String limb)
-    {
-        if (!mirror)
+    public ArrayList<Vec3> getAngles(String limb) {
+        if (!mirror) {
             return super.getAngles(limbConvert(limb));
+        }
 
-        ArrayList<Vec3> mirroredAngles = (ArrayList<Vec3>)super.getAngles(limbConvert(limb)).clone();
+        ArrayList<Vec3> mirroredAngles = (ArrayList<Vec3>) super.getAngles(limbConvert(limb)).clone();
 
-        for (int i = 0; i < mirroredAngles.size(); i++)
+        for (int i = 0; i < mirroredAngles.size(); i++) {
             mirroredAngles.set(i, mirroredAngles.get(i).multiply(1, -1, -1));
+        }
 
         return mirroredAngles;
     }
 
     // Get all angle frames for the specified limb
-    public ArrayList<Float> getSpeeds(String limb)
-    {
+    public ArrayList<Float> getSpeeds(String limb) {
         return super.getSpeeds(limbConvert(limb));
     }
 
-    public ArmPose clone()
-    {
+    public ArmPose clone() {
         ArmPose copyPose = new ArmPose();
 
-        for (String limb : angles.keySet())
-            copyPose.setAngles(limb, (ArrayList<Vec3>)angles.get(limb).clone(), (ArrayList<Float>)speed.get(limb).clone(), priorities.get(limb), offset.get(limb), aLock.get(limb));
+        for (String limb : angles.keySet()) {
+            copyPose.setAngles(limb, (ArrayList<Vec3>) angles.get(limb).clone(), (ArrayList<Float>) speed.get(limb).clone(), priorities.get(limb), offset.get(limb), aLock.get(limb));
+        }
 
-        for (String limb : sizes.keySet())
+        for (String limb : sizes.keySet()) {
             copyPose.addSize(limb, sizes.get(limb), sizePriorities.get(limb), sizeSpeed.get(limb));
+        }
 
         copyPose.disableHeadLook(disableHeadLook, disableHeadLookPriority);
 

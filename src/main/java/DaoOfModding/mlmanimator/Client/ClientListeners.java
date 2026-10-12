@@ -48,68 +48,61 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import java.util.Locale;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
-public class ClientListeners
-{
+public class ClientListeners {
+
     protected static boolean collision = false;
 
     @SubscribeEvent
-    public static void playerTick(TickEvent.PlayerTickEvent event)
-    {
+    public static void playerTick(TickEvent.PlayerTickEvent event) {
         // Do nothing on the server
-        if (event.side == LogicalSide.SERVER)
+        if (event.side == LogicalSide.SERVER) {
             return;
+        }
 
         PlayerPoseHandler handler = PoseHandler.getPlayerPoseHandler(event.player.getUUID());
 
-        if (handler == null)
+        if (handler == null) {
             return;
+        }
 
         collision = handler.collision;
         handler.collision = false;
 
-        if (event.phase == TickEvent.Phase.START)
-        {
+        if (event.phase == TickEvent.Phase.START) {
             // If there is a collision and the player was crouching in the last few ticks, remain crouching
-            if (collision && handler.wasCrouching())
-            {
+            if (collision && handler.wasCrouching()) {
                 setCrouch(event.player, true);
                 handler.setCrouching(event.player.isCrouching());
             }
 
             handler.doDefaultPoses(event.player);
-            handler.tick((AbstractClientPlayer)event.player);
+            handler.tick((AbstractClientPlayer) event.player);
             handler.getPlayerModel().resetItemScale();
-        }
-        else if (event.phase == TickEvent.Phase.END)
-        {
+        } else if (event.phase == TickEvent.Phase.END) {
             // Update the PoseHandler
             handler.updateRenderPose();
 
             // Delay crawl calculations slightly on game load
             //if (event.player.getUUID().compareTo(Minecraft.getInstance().player.getUUID()) == 0)
-
             // If player is crawling
-            if (event.player.hasPose(Pose.SWIMMING) && !event.player.isSwimming())
-            {
+            if (event.player.hasPose(Pose.SWIMMING) && !event.player.isSwimming()) {
                 Boolean crawlNoCollision = event.player.level.noCollision(event.player, event.player.getBoundingBox());
 
                 // If player doesn't NEED to crawl then cancel the crawl
-                if (crawlNoCollision && !handler.isCrawling())
-                {
+                if (crawlNoCollision && !handler.isCrawling()) {
                     handler.setCrawling(false);
 
-                    if (event.player.isShiftKeyDown())
+                    if (event.player.isShiftKeyDown()) {
                         setCrouch(event.player, true);
-                    else
+                    } else {
                         event.player.setPose(Pose.STANDING);
-                }
-                else
-                {
+                    }
+                } else {
                     handler.setCrawling(true);
                 }
-            }
-            else
+            } else {
                 handler.setCrawling(false);
+            }
 
             handler.setCrouching(event.player.isCrouching());
 
@@ -117,37 +110,35 @@ public class ClientListeners
         }
     }
 
-    protected static void setCrouch(Player player, boolean on)
-    {
-        if (player instanceof LocalPlayer)
+    protected static void setCrouch(Player player, boolean on) {
+        if (player instanceof LocalPlayer) {
             ClientReflection.setCrouch((LocalPlayer) player, on);
-        else if (on)
+        } else if (on) {
             player.setPose(Pose.CROUCHING);
-        else
+        } else {
             player.setPose(Pose.STANDING);
+        }
     }
 
     @SubscribeEvent
-    public static void movement(MovementInputUpdateEvent event)
-    {
-        if (event.getEntity() instanceof Player)
-        {
+    public static void movement(MovementInputUpdateEvent event) {
+        if (event.getEntity() instanceof Player) {
             PlayerPoseHandler handler = PoseHandler.getPlayerPoseHandler(event.getEntity().getUUID());
 
-            if (handler == null)
+            if (handler == null) {
                 return;
+            }
 
             // Cancel crouching if the player was not previously crouching and is not holding shift
-            if (event.getEntity().isCrouching() && !handler.wasCrouching() && !event.getEntity().isShiftKeyDown())
+            if (event.getEntity().isCrouching() && !handler.wasCrouching() && !event.getEntity().isShiftKeyDown()) {
                 setCrouch(event.getEntity(), false);
+            }
 
             // If the player is neither crouching or crawling then cancel movement slowdown
-            if (!event.getEntity().isCrouching() && !handler.wasCrouching() && !handler.isCrawling())
+            if (!event.getEntity().isCrouching() && !handler.wasCrouching() && !handler.isCrawling()) {
                 event.getInput().tick(false, 1);
-
-            // Otherwise ensure it is applied
-            else
-            {
+            }// Otherwise ensure it is applied
+            else {
                 float f = Mth.clamp(0.3F + EnchantmentHelper.getSneakingSpeedBonus(event.getEntity()), 0.0F, 1.0F);
                 event.getInput().tick(true, f);
             }
@@ -155,10 +146,8 @@ public class ClientListeners
     }
 
     @SubscribeEvent
-    public static void resize(EntityEvent.Size event)
-    {
-        if (event.getEntity() instanceof Player)
-        {
+    public static void resize(EntityEvent.Size event) {
+        if (event.getEntity() instanceof Player) {
             // Cancel out the vanilla minecraft changes to dimensions/eye height when the "pose" changes
 
             event.setNewSize(event.getOldSize());
@@ -167,82 +156,82 @@ public class ClientListeners
     }
 
     @SubscribeEvent
-    public static void entityTick(TickEvent.ClientTickEvent event)
-    {
-        if (Minecraft.getInstance() == null)
+    public static void entityTick(TickEvent.ClientTickEvent event) {
+        if (Minecraft.getInstance() == null) {
             return;
+        }
 
-        if (event.phase == TickEvent.Phase.END)
-        {
+        if (event.phase == TickEvent.Phase.END) {
             // Cancel player repositioning when riding
-            if (Minecraft.getInstance().level != null)
-                for (Player player : Minecraft.getInstance().level.players())
+            if (Minecraft.getInstance().level != null) {
+                for (Player player : Minecraft.getInstance().level.players()) {
                     if (player.isPassenger()) {
                         // TODO - Ensure this doesn't need another offset based on model height
 
                         player.setPosRaw(player.position().x, player.position().y - player.getMyRidingOffset(), player.position().z);
                     }
+                }
+            }
         }
     }
 
     @SubscribeEvent
-    public static void renderFirstPerson(RenderHandEvent event)
-    {
+    public static void renderFirstPerson(RenderHandEvent event) {
         // TODO: TEMP fix
-        if (Minecraft.getInstance().player.getMainHandItem().getItem() instanceof MapItem)
-        {
+        if (Minecraft.getInstance().player.getMainHandItem().getItem() instanceof MapItem) {
             MultiLimbedRenderer.enableFirstPersonHands = true;
-        }
-        else
+        } else {
             MultiLimbedRenderer.enableFirstPersonHands = Config.Client.vanillaHands();
+        }
 
         // Do nothing unless this is trying to render the main hand
         // Otherwise this will run twice at render
-        if (event.getHand() != InteractionHand.MAIN_HAND)
-        {
-            if (!MultiLimbedRenderer.shouldRenderHands())
+        if (event.getHand() != InteractionHand.MAIN_HAND) {
+            if (!MultiLimbedRenderer.shouldRenderHands()) {
                 event.setCanceled(true);
+            }
 
             return;
         }
 
         // Do nothing if pose handler does not exist or can't be setup
-        if (!PoseHandler.setupPoseHandler(Minecraft.getInstance().player))
+        if (!PoseHandler.setupPoseHandler(Minecraft.getInstance().player)) {
             return;
+        }
 
         // If MultiLimbedRenderer renders the player, cancel the render event
         event.setCanceled(MultiLimbedRenderer.renderFirstPerson(Minecraft.getInstance().player, event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight()));
     }
 
     @SubscribeEvent
-    public static void renderPlayer(RenderPlayerEvent.Pre event)
-    {
+    public static void renderPlayer(RenderPlayerEvent.Pre event) {
         // Do nothing if pose handler does not exist or can't be setup
-        if (!PoseHandler.setupPoseHandler((AbstractClientPlayer)event.getEntity()))
+        if (!PoseHandler.setupPoseHandler((AbstractClientPlayer) event.getEntity())) {
             return;
+        }
 
-        MultiLimbedRenderer.handleLayers((AbstractClientPlayer)event.getEntity(), event.getRenderer());
+        MultiLimbedRenderer.handleLayers((AbstractClientPlayer) event.getEntity(), event.getRenderer());
 
         // If MultiLimbedRenderer renders the player, cancel the render event
-        event.setCanceled(MultiLimbedRenderer.render((AbstractClientPlayer)event.getEntity(), event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight(), ClientReflection.isRenderingInventory()));
+        event.setCanceled(MultiLimbedRenderer.render((AbstractClientPlayer) event.getEntity(), event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight(), ClientReflection.isRenderingInventory()));
     }
 
     @SubscribeEvent
     // Toggle off the third person boolean so that the camera will still render in first person
-    public static void renderWorldLast(RenderLevelLastEvent event)
-    {
-        if (Minecraft.getInstance().level == null)
+    public static void renderWorldLast(RenderLevelLastEvent event) {
+        if (Minecraft.getInstance().level == null) {
             return;
+        }
 
         MultiLimbedRenderer.fakeThirdPersonOff();
     }
 
     @SubscribeEvent
     // Toggle on the third person boolean in Camera to allow the player model to be drawn even when in first person
-    public static void cameraSetup(ViewportEvent.ComputeCameraAngles event)
-    {
-        if (Minecraft.getInstance().level == null)
+    public static void cameraSetup(ViewportEvent.ComputeCameraAngles event) {
+        if (Minecraft.getInstance().level == null) {
             return;
+        }
 
         if (MultiLimbedRenderer.fakeThirdPersonOn()) {
             //MultiLimbedRenderer.pushBackCamera(event.getPartialTick());
@@ -254,10 +243,8 @@ public class ClientListeners
     }
 
     @SubscribeEvent
-    public static void playerDisconnects(PlayerEvent.PlayerLoggedOutEvent event)
-    {
-        if (event.getEntity().getUUID().compareTo(Minecraft.getInstance().player.getUUID()) == 0)
-        {
+    public static void playerDisconnects(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity().getUUID().compareTo(Minecraft.getInstance().player.getUUID()) == 0) {
             PoseHandler.clear();
         }
     }

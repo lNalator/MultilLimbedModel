@@ -22,8 +22,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ExtendableModelRenderer
-{
+public class ExtendableModelRenderer {
+
     protected ModelPart mPart;
 
     protected ArrayList<ExtendableModelLayer> layers = new ArrayList<ExtendableModelLayer>();
@@ -44,7 +44,7 @@ public class ExtendableModelRenderer
     protected float notLookingPitch = 0;
     protected float oldNotLookingPitch = 0;
 
-    protected Vec3 rotationOffset = new Vec3(0, 0 ,0);
+    protected Vec3 rotationOffset = new Vec3(0, 0, 0);
     protected Vec3 rotationPoint = new Vec3(0, 0, 0);
 
     protected boolean renderFirstPerson = true;
@@ -74,79 +74,66 @@ public class ExtendableModelRenderer
 
     protected boolean areHands = false;
 
-    public ExtendableModelRenderer(String limbName)
-    {
+    public ExtendableModelRenderer(String limbName) {
         name = limbName;
 
         mPart = new ModelPart(new ArrayList<>(), new HashMap<String, ModelPart>());
     }
 
-    public ExtendableModelRenderer clone()
-    {
+    public ExtendableModelRenderer clone() {
         return clone("");
     }
 
-    public ExtendableModelRenderer clone(String nameAddition)
-    {
+    public ExtendableModelRenderer clone(String nameAddition) {
         ExtendableModelRenderer copy = new ExtendableModelRenderer(name.concat(nameAddition));
         copy(copy, nameAddition);
 
         return copy;
     }
 
-    public void setHands(boolean on)
-    {
+    public void setHands(boolean on) {
         areHands = on;
     }
 
-    public ModelPart getModelPart()
-    {
+    public ModelPart getModelPart() {
         return mPart;
     }
 
-    public Vec3 getSize()
-    {
+    public Vec3 getSize() {
         return thisSize;
     }
 
-    public Vec3 getResize()
-    {
+    public Vec3 getResize() {
         return defaultResize.multiply(thisSize);
     }
 
-    public void addLayer(UVPair tex, UVPair texSize, float extend, String name)
-    {
+    public void addLayer(UVPair tex, UVPair texSize, float extend, String name) {
         layers.add(new ExtendableModelLayer(tex, texSize, extend, name));
     }
 
-    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror)
-    {
+    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror) {
         layers.add(new ExtendableModelLayer(tex, texSize, extend, name, mirror, 1));
     }
 
-    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize)
-    {
+    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize) {
         layers.add(new ExtendableModelLayer(tex, texSize, extend, name, mirror, textureResize));
     }
 
-    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize, Direction invisibleDirection)
-    {
+    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize, Direction invisibleDirection) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name, mirror, textureResize);
         layer.setVisable(invisibleDirection, false);
 
         layers.add(layer);
     }
 
-    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, Direction invisibleDirection)
-    {
+    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, Direction invisibleDirection) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name);
         layer.setVisable(invisibleDirection, false);
 
         layers.add(layer);
     }
 
-    public void copy(ExtendableModelRenderer copy, String nameAddition)
-    {
+    public void copy(ExtendableModelRenderer copy, String nameAddition) {
         copy.dimensions = dimensions;
         copy.look = look;
         copy.rotationOffset = rotationOffset;
@@ -167,185 +154,170 @@ public class ExtendableModelRenderer
 
         copy.areHands = areHands;
 
-        for (ExtendableModelLayer layer : layers)
+        for (ExtendableModelLayer layer : layers) {
             copy.layers.add(layer.clone());
+        }
 
         copy.generateCube();
 
-        for (ExtendableModelRenderer children : child)
+        for (ExtendableModelRenderer children : child) {
             copy.addChild(children.clone(nameAddition));
+        }
 
-        for (Quad quad : quads)
+        for (Quad quad : quads) {
             copy.addQuad(quad);
+        }
 
-        for (QuadLinkage link : quadLinkage)
+        for (QuadLinkage link : quadLinkage) {
             copy.addQuadLinkage(link);
+        }
     }
 
-    public void lockHitboxAnimation(Vec3 animation)
-    {
-        if (animation == null)
-        {
+    public void lockHitboxAnimation(Vec3 animation) {
+        if (animation == null) {
             lockBBAnimation = false;
-        }
-        else
-        {
+        } else {
             lockBBAnimation = true;
             lockedAnimation = animation;
         }
 
     }
 
-    public void setHitbox(boolean on)
-    {
+    public void setHitbox(boolean on) {
         hasHitbox = on;
     }
 
-    public Vec3 getDefaultSize()
-    {
+    public Vec3 getDefaultSize() {
         return defaultSize;
     }
 
-    public void setNotLookingPitch(float pitch)
-    {
+    public void setNotLookingPitch(float pitch) {
         oldNotLookingPitch = notLookingPitch;
         notLookingPitch = pitch;
     }
 
-    public void addQuad(Quad newQuad)
-    {
+    public void addQuad(Quad newQuad) {
         quads.add(newQuad);
     }
 
-    public void removeQuad(Quad quad)
-    {
-        if (quads.contains(quad))
+    public void removeQuad(Quad quad) {
+        if (quads.contains(quad)) {
             quads.remove(quad);
+        }
     }
 
-    public void setName(String newName)
-    {
+    public void setName(String newName) {
         name = newName;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void addQuadLinkage(QuadLinkage link)
-    {
-        if (!hasQuadLinkage(link))
+    public void addQuadLinkage(QuadLinkage link) {
+        if (!hasQuadLinkage(link)) {
             quadLinkage.add(link);
+        }
     }
 
-    public void removeQuadLinkage(QuadLinkage link)
-    {
-        if (hasQuadLinkage(link))
+    public void removeQuadLinkage(QuadLinkage link) {
+        if (hasQuadLinkage(link)) {
             quadLinkage.remove(link);
+        }
     }
 
-    public boolean hasQuadLinkage(QuadLinkage link)
-    {
-        if (quadLinkage.contains(link))
+    public boolean hasQuadLinkage(QuadLinkage link) {
+        if (quadLinkage.contains(link)) {
             return true;
+        }
 
         return false;
     }
 
-    public void transferQuadLinkages(ExtendableModelRenderer model)
-    {
-        for (QuadLinkage link : quadLinkage)
+    public void transferQuadLinkages(ExtendableModelRenderer model) {
+        for (QuadLinkage link : quadLinkage) {
             model.addQuadLinkage(link);
+        }
     }
 
-    public void setRotationPoint(Vec3 newRotation)
-    {
+    public void setRotationPoint(Vec3 newRotation) {
         rotationPoint = new Vec3(1, 1, 1).subtract(newRotation);
     }
 
-    public Vec3 getRotationPoint()
-    {
+    public Vec3 getRotationPoint() {
         return rotationPoint;
     }
 
-    public float getNotLookingPitch()
-    {
+    public float getNotLookingPitch() {
         return notLookingPitch;
     }
 
-    public float getOldNotLookingPitch()
-    {
+    public float getOldNotLookingPitch() {
         return oldNotLookingPitch;
     }
 
-    public void setFirstPersonRender(boolean render)
-    {
+    public void setFirstPersonRender(boolean render) {
         renderFirstPerson = render;
     }
 
-    public void setFirstPersonRenderForSelfAndChildren(boolean render)
-    {
+    public void setFirstPersonRenderForSelfAndChildren(boolean render) {
         renderFirstPerson = render;
 
-        for (ExtendableModelRenderer children : child)
+        for (ExtendableModelRenderer children : child) {
             children.setFirstPersonRenderForSelfAndChildren(render);
+        }
     }
 
-    public void setRotationOffset(Vec3 offset)
-    {
+    public void setRotationOffset(Vec3 offset) {
         rotationOffset = offset;
     }
 
     // Move all children from this model to another
-    public void fosterChildren(ExtendableModelRenderer toMove)
-    {
-        for (ExtendableModelRenderer fosterChild : (ArrayList<ExtendableModelRenderer>) child.clone())
+    public void fosterChildren(ExtendableModelRenderer toMove) {
+        for (ExtendableModelRenderer fosterChild : (ArrayList<ExtendableModelRenderer>) child.clone()) {
             toMove.addChild(fosterChild);
+        }
 
-        for (Quad fosterQuad : quads)
+        for (Quad fosterQuad : quads) {
             toMove.addQuad(fosterQuad);
+        }
 
         child.clear();
     }
 
     // Set whether this model should be looking in the direction of the player
-    public void setLooking(boolean isLooking)
-    {
+    public void setLooking(boolean isLooking) {
         look = isLooking;
     }
 
-    public Boolean isLooking()
-    {
+    public Boolean isLooking() {
         return look;
     }
 
-    public ExtendableModelRenderer getParent()
-    {
+    public ExtendableModelRenderer getParent() {
         return parent;
     }
 
-    public void setParent(ExtendableModelRenderer parent)
-    {
-        if (this.parent == parent)
+    public void setParent(ExtendableModelRenderer parent) {
+        if (this.parent == parent) {
             return;
+        }
 
-        if (this.parent != null)
+        if (this.parent != null) {
             this.parent.removeChild(this);
+        }
 
         this.parent = parent;
     }
 
-    public void setRotationDepth(int newDepth)
-    {
+    public void setRotationDepth(int newDepth) {
         rotationDepth = newDepth;
     }
 
-    public void rotate(float xRotation, float yRotation, float zRotation)
-    {
-        xRotation = xRotation / ((float)rotationDepth+1);
-        yRotation = yRotation / ((float)rotationDepth+1);
-        zRotation = zRotation / ((float)rotationDepth+1);
+    public void rotate(float xRotation, float yRotation, float zRotation) {
+        xRotation = xRotation / ((float) rotationDepth + 1);
+        yRotation = yRotation / ((float) rotationDepth + 1);
+        zRotation = zRotation / ((float) rotationDepth + 1);
 
         mPart.xRot = xRotation;
         mPart.yRot = yRotation;
@@ -355,8 +327,7 @@ public class ExtendableModelRenderer
 
         ExtendableModelRenderer traversing = this;
 
-        while (traverse > 0)
-        {
+        while (traverse > 0) {
             traversing = traversing.getParent();
             traversing.rotate(xRotation, yRotation, zRotation);
 
@@ -364,15 +335,13 @@ public class ExtendableModelRenderer
         }
     }
 
-    public ArrayList<ExtendableModelRenderer> getChildren()
-    {
+    public ArrayList<ExtendableModelRenderer> getChildren() {
         return child;
     }
 
     // Extend the model, creating depth amount of boxes equaling a total of fullSize extending towards direction
     // Each Model will rotate around the midpoint of the previous model, a 1 or -1 in the rotationPoint will move that point to the edge of the specified side
-    public void extend(resizeModule resizer)
-    {
+    public void extend(resizeModule resizer) {
         usedSize = resizer.getOriginalSize();
 
         defaultSize = resizer.getSize();
@@ -384,12 +353,14 @@ public class ExtendableModelRenderer
         generateCube();
 
         // Set the top of the model to not be drawn if this isn't the top
-        if (usedSize.length() > 0)
+        if (usedSize.length() > 0) {
             setVisibleDirection(resizer.getTop(), false);
+        }
 
         // Return this model if at max depth
-        if (!resizer.continueResizing())
+        if (!resizer.continueResizing()) {
             return;
+        }
 
         // Set the bottom of the model to not be drawn if this isn't the bottom
         setVisibleDirection(resizer.getBottom(), false);
@@ -398,11 +369,12 @@ public class ExtendableModelRenderer
         ExtendableModelRenderer newModel = new ExtendableModelRenderer(name + "+");
         newModel.setRotationPoint(resizer.getRotationPoint());
 
-        newModel.setPos((float)resizer.getPosition().x, (float)resizer.getPosition().y, (float)resizer.getPosition().z);
-        newModel.setFixedPosAdjustment((float)resizer.getSpacing().x, (float)resizer.getSpacing().y, (float)resizer.getSpacing().z);
+        newModel.setPos((float) resizer.getPosition().x, (float) resizer.getPosition().y, (float) resizer.getPosition().z);
+        newModel.setFixedPosAdjustment((float) resizer.getSpacing().x, (float) resizer.getSpacing().y, (float) resizer.getSpacing().z);
 
-        for (ExtendableModelLayer layer : layers)
-            newModel.addLayer(new UVPair(layer.textureOffset.u() + (int)texModifier.x, layer.textureOffset.v() + (int)texModifier.y), layer.textureSize, layer.extended + resizer.getDelta(), layer.name);
+        for (ExtendableModelLayer layer : layers) {
+            newModel.addLayer(new UVPair(layer.textureOffset.u() + (int) texModifier.x, layer.textureOffset.v() + (int) texModifier.y), layer.textureSize, layer.extended + resizer.getDelta(), layer.name);
+        }
 
         addChild(newModel);
 
@@ -410,80 +382,76 @@ public class ExtendableModelRenderer
         newModel.extend(resizer.nextLevel());
     }
 
-    public void setVisibleDirection(@Nullable Direction dir, boolean on)
-    {
-        if (dir == null)
+    public void setVisibleDirection(@Nullable Direction dir, boolean on) {
+        if (dir == null) {
             return;
+        }
 
-        for (ExtendableModelLayer layer : layers)
+        for (ExtendableModelLayer layer : layers) {
             layer.setVisable(dir, on);
+        }
     }
 
-    public void setDefaultResize(Vec3 newSize)
-    {
+    public void setDefaultResize(Vec3 newSize) {
         defaultResize = newSize;
     }
 
-    public void resetResize()
-    {
+    public void resetResize() {
         resize(new Vec3(1, 1, 1));
 
-        for (ExtendableModelRenderer children : child)
+        for (ExtendableModelRenderer children : child) {
             children.resetResize();
+        }
     }
 
-    public void setNoResize(Boolean on)
-    {
+    public void setNoResize(Boolean on) {
         dontResize = on;
     }
 
-    public void setNoResizeForSelfAndChildren(Boolean on)
-    {
+    public void setNoResizeForSelfAndChildren(Boolean on) {
         dontResize = on;
 
-        for (ExtendableModelRenderer children : child)
+        for (ExtendableModelRenderer children : child) {
             children.setNoResizeForSelfAndChildren(on);
+        }
     }
 
-    public void addToResizeForThisAndChildren(Vec3 addTo)
-    {
+    public void addToResizeForThisAndChildren(Vec3 addTo) {
         resize(thisSize.multiply(addTo));
 
-        for (ExtendableModelRenderer children : child)
+        for (ExtendableModelRenderer children : child) {
             children.addToResizeForThisAndChildren(addTo);
+        }
     }
 
-    public void resize(Vec3 newSize)
-    {
-        if (!dontResize)
+    public void resize(Vec3 newSize) {
+        if (!dontResize) {
             thisSize = newSize;
+        }
     }
 
-    public void addChild(ExtendableModelRenderer c)
-    {
+    public void addChild(ExtendableModelRenderer c) {
         child.add(c);
         c.setParent(this);
     }
 
-    public void removeChild(ExtendableModelRenderer toRemove)
-    {
+    public void removeChild(ExtendableModelRenderer toRemove) {
         child.remove(toRemove);
     }
 
     // Generate the cube for this model
-    public void generateCube()
-    {
+    public void generateCube() {
         Vec3 pos = getRotationPoint();
 
         pos = defaultSize.scale(-1).multiply(pos);
 
-        float width = (float)(defaultSize.x);
-        float height = (float)(defaultSize.y);
-        float depth = (float)(defaultSize.z);
+        float width = (float) (defaultSize.x);
+        float height = (float) (defaultSize.y);
+        float depth = (float) (defaultSize.z);
 
-        float x1 = (float)pos.x;
-        float y1 = (float)pos.y;
-        float z1 = (float)pos.z;
+        float x1 = (float) pos.x;
+        float y1 = (float) pos.y;
+        float z1 = (float) pos.z;
 
         float x2 = x1 + width;
         float y2 = y1 + height;
@@ -498,53 +466,51 @@ public class ExtendableModelRenderer
         points[6] = new Vector3f(x2, y2, z1);
         points[7] = new Vector3f(x2, y2, z2);
 
-        for (ExtendableModelLayer layer : layers)
+        for (ExtendableModelLayer layer : layers) {
             layer.makeCube((float) pos.x, (float) pos.y, (float) pos.z, width, height, depth, usedSize);
+        }
     }
 
-    public void setUsedSize(Vec3 newUsed)
-    {
+    public void setUsedSize(Vec3 newUsed) {
         usedSize = newUsed;
         generateCube();
     }
 
     // Toggle all parts set not to be visible in first person so that they don't render
-    public void toggleFirstPersonVisability(boolean on)
-    {
-        if (!renderFirstPerson)
-        {
-            if (on)
-            {
+    public void toggleFirstPersonVisability(boolean on) {
+        if (!renderFirstPerson) {
+            if (on) {
                 oldVisability = mPart.visible;
                 mPart.visible = false;
-            }
-            else
+            } else {
                 mPart.visible = oldVisability;
+            }
         }
 
-        for (ExtendableModelRenderer childSearch : getChildren())
+        for (ExtendableModelRenderer childSearch : getChildren()) {
             childSearch.toggleFirstPersonVisability(on);
+        }
     }
 
-    public void render(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha, TextureHandler textures)
-    {
+    public void render(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha, TextureHandler textures) {
         mPart.xRot += rotationOffset.x;
         mPart.yRot += rotationOffset.y;
         mPart.zRot += rotationOffset.z;
 
         // If rendering in first person and this model is set not to render in first person, just render it's children
-        if (MultiLimbedRenderer.isFakeThirdPerson() && (!renderFirstPerson || (MultiLimbedRenderer.shouldRenderHands() && areHands)))
+        if (MultiLimbedRenderer.isFakeThirdPerson() && (!renderFirstPerson || (MultiLimbedRenderer.shouldRenderHands() && areHands))) {
             fakerender(PoseStackIn, packedLightIn, packedOverlayIn, red, green, blue, alpha, textures);
-        else
-        {
-            if (MultiLimbedRenderer.isFakeThirdPerson())
+        } else {
+            if (MultiLimbedRenderer.isFakeThirdPerson()) {
                 toggleFirstPersonVisability(true);
+            }
 
             //mPart.render(PoseStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
             renderCube(PoseStackIn, packedLightIn, packedOverlayIn, red, green, blue, alpha, textures);
 
-            if (MultiLimbedRenderer.isFakeThirdPerson())
+            if (MultiLimbedRenderer.isFakeThirdPerson()) {
                 toggleFirstPersonVisability(false);
+            }
 
             renderQuads(PoseStackIn, packedLightIn, packedOverlayIn, textures);
         }
@@ -554,69 +520,61 @@ public class ExtendableModelRenderer
         mPart.zRot -= rotationOffset.z;
     }
 
-    public void renderQuads(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, TextureHandler textures)
-    {
-        for (Quad quad : quads)
+    public void renderQuads(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, TextureHandler textures) {
+        for (Quad quad : quads) {
             quad.render(PoseStackIn, packedLightIn, packedOverlayIn, textures);
+        }
     }
 
-    public void renderCube(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha, TextureHandler textures)
-    {
-        if (mPart.visible)
-        {
+    public void renderCube(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha, TextureHandler textures) {
+        if (mPart.visible) {
             PoseStackIn.pushPose();
             mPart.translateAndRotate(PoseStackIn);
 
             // Draw each model layer
-            for (ExtendableModelLayer layer : layers)
-            {
+            for (ExtendableModelLayer layer : layers) {
                 ResourceLocation tex = textures.getTexture(layer.name);
 
-                if (tex != null)
-                {
+                if (tex != null) {
                     VertexConsumer bufferIn = MultiLimbedRenderer.getVertexBuilder(tex);
                     Vec3 color = textures.getColor(layer.name);
 
-                    if (color != null)
+                    if (color != null) {
                         layer.layerCube.compile(PoseStackIn.last(), bufferIn, packedLightIn, packedOverlayIn, (float) color.x, (float) color.y, (float) color.z, alpha, getResize());
-                    else
+                    } else {
                         layer.layerCube.compile(PoseStackIn.last(), bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha, getResize());
+                    }
                 }
             }
 
-            for(ExtendableModelRenderer child : getChildren())
+            for (ExtendableModelRenderer child : getChildren()) {
                 child.render(PoseStackIn, packedLightIn, packedOverlayIn, red, green, blue, alpha, textures);
+            }
 
             PoseStackIn.popPose();
         }
     }
 
-    public void setPos(float xPos, float yPos, float zPos)
-    {
+    public void setPos(float xPos, float yPos, float zPos) {
         relativePosition = new Vec3(xPos, yPos, zPos);
     }
 
     // Values to be added to the models position irregardless of it's parent
-    public void setFixedPosAdjustment(float xPos, float yPos, float zPos)
-    {
+    public void setFixedPosAdjustment(float xPos, float yPos, float zPos) {
         fixedPosition = new Vec3(xPos, yPos, zPos);
     }
 
     // Update this models position based on it's parents position and it's relative position
-    public void updatePosition()
-    {
-        if (getParent() == null)
-        {
-            mPart.x = (float)relativePosition.x;
-            mPart.y = (float)relativePosition.y;
-            mPart.z = (float)relativePosition.z;
-        }
-        else
-        {
+    public void updatePosition() {
+        if (getParent() == null) {
+            mPart.x = (float) relativePosition.x;
+            mPart.y = (float) relativePosition.y;
+            mPart.z = (float) relativePosition.z;
+        } else {
             Vec3 pos = getParent().translateRelativePosition(relativePosition);
-            mPart.x = (float)pos.x;
-            mPart.y = (float)pos.y;
-            mPart.z = (float)pos.z;
+            mPart.x = (float) pos.x;
+            mPart.y = (float) pos.y;
+            mPart.z = (float) pos.z;
         }
 
         Vec3 rsize = getResize();
@@ -627,48 +585,45 @@ public class ExtendableModelRenderer
     }
 
     // Render all children for this model, but not the model itself
-    public void fakerender(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha, TextureHandler textures)
-    {
-        if (mPart.visible)
-        {
-            if (child.size() > 0)
-            {
+    public void fakerender(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha, TextureHandler textures) {
+        if (mPart.visible) {
+            if (child.size() > 0) {
                 PoseStackIn.pushPose();
                 mPart.translateAndRotate(PoseStackIn);
 
-                for(ExtendableModelRenderer children : child)
+                for (ExtendableModelRenderer children : child) {
                     children.render(PoseStackIn, packedLightIn, packedOverlayIn, red, green, blue, alpha, textures);
+                }
 
                 PoseStackIn.popPose();
             }
         }
     }
 
-    public void translatePoseStackToThis(PoseStack PoseStackIn)
-    {
-        if (parent != null)
+    public void translatePoseStackToThis(PoseStack PoseStackIn) {
+        if (parent != null) {
             parent.translatePoseStackToThis(PoseStackIn);
+        }
 
         mPart.translateAndRotate(PoseStackIn);
     }
 
     // Get the minimum height of any point on this model
-    public float getMinHeight()
-    {
+    public float getMinHeight() {
         return dimensions.getMinHeight();
     }
 
-    public MultiLimbedDimensions calculateMinHeight(PoseStack PoseStackIn, double yRot)
-    {
+    public MultiLimbedDimensions calculateMinHeight(PoseStack PoseStackIn, double yRot) {
         // Update the position of this model first
         updatePosition();
 
         PoseStackIn.pushPose();
 
-        if (lockBBAnimation)
+        if (lockBBAnimation) {
             rotateMatrixToValue(PoseStackIn, lockedAnimation);
-        else
+        } else {
             rotateMatrix(PoseStackIn);
+        }
 
         Matrix4f rotator = PoseStackIn.last().pose();
 
@@ -678,9 +633,8 @@ public class ExtendableModelRenderer
 
         dimensions.reset();
 
-        for (Vector3f point : points)
-        {
-            Vector4f vector4f = new Vector4f(point.x() * (float)resize.x, point.y() * (float)resize.y, point.z() * (float)resize.z, 1.0F);
+        for (Vector3f point : points) {
+            Vector4f vector4f = new Vector4f(point.x() * (float) resize.x, point.y() * (float) resize.y, point.z() * (float) resize.z, 1.0F);
             vector4f.transform(rotator);
 
             // Rotate this part to be facing the same direction as the body
@@ -689,8 +643,9 @@ public class ExtendableModelRenderer
 
             dimensions.updateSize(point);
 
-            if (point.y() > min)
+            if (point.y() > min) {
                 min = point.y();
+            }
         }
 
         // Update any quad linkages now so it doesn't have to run through the same loop again
@@ -699,25 +654,25 @@ public class ExtendableModelRenderer
         MultiLimbedDimensions totalDimensions = new MultiLimbedDimensions(dimensions);
 
         // Calculate the min height of children
-        for (ExtendableModelRenderer testChild : child)
+        for (ExtendableModelRenderer testChild : child) {
             totalDimensions.combine(testChild.calculateMinHeight(PoseStackIn, yRot));
+        }
 
         PoseStackIn.popPose();
 
         // Do not return size for this or any children if the model does not have a hitbox
-        if (!hasHitbox)
+        if (!hasHitbox) {
             return new MultiLimbedDimensions();
+        }
 
         return totalDimensions;
     }
 
-    public MultiLimbedDimensions getDimensions()
-    {
+    public MultiLimbedDimensions getDimensions() {
         return dimensions;
     }
 
-    public Vec3 translateRelativePosition(Vec3 relativePos)
-    {
+    public Vec3 translateRelativePosition(Vec3 relativePos) {
         Vec3 minPos = new Vec3(points[0].x(), points[0].y(), points[0].z());
         Vec3 maxPos = new Vec3(points[7].x(), points[7].y(), points[7].z());
 
@@ -732,15 +687,13 @@ public class ExtendableModelRenderer
     }
 
     // Update the position of any linked quads vertices
-    public void updateQuadLinkages(Matrix4f rotator)
-    {
-        for (QuadLinkage link : quadLinkage)
-        {
+    public void updateQuadLinkages(Matrix4f rotator) {
+        for (QuadLinkage link : quadLinkage) {
             Vec3 relativePos = link.getRelativePos();
 
             Vec3 position = translateRelativePosition(relativePos);
 
-            Vector4f position4f = new Vector4f((float)position.x, (float)position.y, (float)position.z, 1);
+            Vector4f position4f = new Vector4f((float) position.x, (float) position.y, (float) position.z, 1);
             position4f.transform(rotator);
 
             link.updatePos(new Vec3(position4f.x(), position4f.y(), position4f.z()));
@@ -748,22 +701,20 @@ public class ExtendableModelRenderer
     }
 
     // Returns the height of the middle of this model
-    public float getMidPoint(PoseStack PoseStackIn)
-    {
+    public float getMidPoint(PoseStack PoseStackIn) {
         Matrix4f rotator = PoseStackIn.last().pose();
 
         Vec3 modelMidPoint = new Vec3(mPart.x, mPart.y, mPart.z);
         modelMidPoint = modelMidPoint.subtract(getDefaultSize().multiply(getResize().scale(0.5)));
 
-        Vector4f vector4f = new Vector4f((float)modelMidPoint.x(), (float)modelMidPoint.y(), (float)modelMidPoint.z(), 1.0F);
+        Vector4f vector4f = new Vector4f((float) modelMidPoint.x(), (float) modelMidPoint.y(), (float) modelMidPoint.z(), 1.0F);
         vector4f.transform(rotator);
 
         return vector4f.y();
     }
 
     // Returns the height at the top of this model
-    public float getTopPoint(PoseStack PoseStackIn)
-    {
+    public float getTopPoint(PoseStack PoseStackIn) {
         Matrix4f rotator = PoseStackIn.last().pose();
         Vector4f vector4f = new Vector4f(mPart.x, mPart.y, mPart.z, 1.0F);
         vector4f.transform(rotator);
@@ -772,8 +723,7 @@ public class ExtendableModelRenderer
     }
 
     // Move matrix to the position and rotation of this model
-    public void moveToThisModel(PoseStack PoseStackIn, Vec3 position)
-    {
+    public void moveToThisModel(PoseStack PoseStackIn, Vec3 position) {
         rotateAroundParents(PoseStackIn);
 
         Vec3 resizeVec = getDefaultSize().multiply(getResize());
@@ -782,20 +732,18 @@ public class ExtendableModelRenderer
         PoseStackIn.translate((resizeVec.x / 16) * position.x, (resizeVec.y / 16) * position.y, (resizeVec.z / 16) * position.z);
     }
 
-    public void rotateAroundParents(PoseStack PoseStackIn)
-    {
-        if (this.parent != null)
+    public void rotateAroundParents(PoseStack PoseStackIn) {
+        if (this.parent != null) {
             this.parent.rotateAroundParents(PoseStackIn);
+        }
 
         mPart.translateAndRotate(PoseStackIn);
     }
 
-    public void rotateMatrix(PoseStack PoseStackIn)
-    {
+    public void rotateMatrix(PoseStack PoseStackIn) {
         mPart.xRot += rotationOffset.x;
         mPart.yRot += rotationOffset.y;
         mPart.zRot += rotationOffset.z;
-
 
         PoseStackIn.translate(mPart.x, mPart.y, mPart.z);
         if (mPart.zRot != 0.0F) {
@@ -815,23 +763,22 @@ public class ExtendableModelRenderer
         mPart.zRot -= rotationOffset.z;
     }
 
-    public void rotateMatrixToValue(PoseStack PoseStackIn, Vec3 rotation)
-    {
+    public void rotateMatrixToValue(PoseStack PoseStackIn, Vec3 rotation) {
         mPart.xRot += rotationOffset.x;
         mPart.yRot += rotationOffset.y;
         mPart.zRot += rotationOffset.z;
 
         PoseStackIn.translate(mPart.x, mPart.y, mPart.z);
         if (rotation.z != 0.0F) {
-            PoseStackIn.mulPose(Vector3f.ZP.rotation((float)rotation.z));
+            PoseStackIn.mulPose(Vector3f.ZP.rotation((float) rotation.z));
         }
 
         if (rotation.y != 0.0F) {
-            PoseStackIn.mulPose(Vector3f.YP.rotation((float)rotation.y));
+            PoseStackIn.mulPose(Vector3f.YP.rotation((float) rotation.y));
         }
 
         if (rotation.x != 0.0F) {
-            PoseStackIn.mulPose(Vector3f.XP.rotation((float)rotation.x));
+            PoseStackIn.mulPose(Vector3f.XP.rotation((float) rotation.x));
         }
 
         mPart.xRot -= rotationOffset.x;
@@ -839,9 +786,9 @@ public class ExtendableModelRenderer
         mPart.zRot -= rotationOffset.z;
     }
 
-    public void tick(AbstractClientPlayer player)
-    {
-        for (ExtendableModelRenderer thisChild : getChildren())
+    public void tick(AbstractClientPlayer player) {
+        for (ExtendableModelRenderer thisChild : getChildren()) {
             thisChild.tick(player);
+        }
     }
 }

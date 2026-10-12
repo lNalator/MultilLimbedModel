@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-public class PlayerPose
-{
+public class PlayerPose {
+
     protected HashMap<String, Integer> priorities = new HashMap<String, Integer>();
     protected HashMap<String, Integer> sizePriorities = new HashMap<String, Integer>();
     protected HashMap<String, Float> sizeSpeed = new HashMap<String, Float>();
@@ -18,7 +18,6 @@ public class PlayerPose
     // Z = Left and Right, Positive goes right, negative goes left
     protected HashMap<String, ArrayList<Vec3>> angles = new HashMap<String, ArrayList<Vec3>>();
     protected HashMap<String, ArrayList<Float>> speed = new HashMap<String, ArrayList<Float>>();
-
 
     protected HashMap<String, Vec3> offset = new HashMap<String, Vec3>();
     protected HashMap<String, Vec3> sizes = new HashMap<String, Vec3>();
@@ -30,122 +29,113 @@ public class PlayerPose
     public static final double oneEighty = Math.toRadians(180);
     public static final double threeSixty = Math.toRadians(360);
 
-    public PlayerPose()
-    {
+    public PlayerPose() {
     }
 
     // Set all angles on the specified limb to the specified values
-    public void setAngles(String limb, ArrayList<Vec3> newAngles, ArrayList<Float> newSpeeds, int priority, Vec3 off, int animationLock)
-    {
+    public void setAngles(String limb, ArrayList<Vec3> newAngles, ArrayList<Float> newSpeeds, int priority, Vec3 off, int animationLock) {
         angles.put(limb, newAngles);
         speed.put(limb, newSpeeds);
         priorities.put(limb, priority);
 
-        if (off != null)
+        if (off != null) {
             offset.put(limb, off);
+        }
 
         aLock.put(limb, animationLock);
     }
 
     // Add the specified offset into the offset vector for the specified limb
     // The offset will be added to the angle at render time
-    public void addOffset(String limb, Vec3 offsetVector)
-    {
-        if (offset.containsKey(limb))
+    public void addOffset(String limb, Vec3 offsetVector) {
+        if (offset.containsKey(limb)) {
             offsetVector = offset.get(limb).add(offsetVector);
+        }
 
         offset.put(limb, offsetVector);
     }
 
-    public Vec3 getOffset(String limb)
-    {
-        if (offset.containsKey(limb))
+    public Vec3 getOffset(String limb) {
+        if (offset.containsKey(limb)) {
             return offset.get(limb);
+        }
 
         return new Vec3(0, 0, 0);
     }
 
-    public void addSize(String limb, Vec3 size, int priority, float speed)
-    {
-        if (sizePriorities.containsKey(limb) && sizePriorities.get(limb) >= priority)
+    public void addSize(String limb, Vec3 size, int priority, float speed) {
+        if (sizePriorities.containsKey(limb) && sizePriorities.get(limb) >= priority) {
             return;
+        }
 
         sizePriorities.put(limb, priority);
         sizeSpeed.put(limb, speed);
         sizes.put(limb, size);
     }
 
-    public Vec3 getSize(String limb)
-    {
-        if (sizes.containsKey(limb))
+    public Vec3 getSize(String limb) {
+        if (sizes.containsKey(limb)) {
             return sizes.get(limb);
+        }
 
         return null;
     }
 
-    public int getSizePriority(String limb)
-    {
-        if (sizePriorities.containsKey(limb))
+    public int getSizePriority(String limb) {
+        if (sizePriorities.containsKey(limb)) {
             return sizePriorities.get(limb);
+        }
 
         return -1;
     }
 
-    public float getSizeSpeed(String limb)
-    {
-        if (sizeSpeed.containsKey(limb))
+    public float getSizeSpeed(String limb) {
+        if (sizeSpeed.containsKey(limb)) {
             return sizeSpeed.get(limb);
+        }
 
         return -1;
     }
 
-    public HashMap<String, Vec3> getSizes()
-    {
+    public HashMap<String, Vec3> getSizes() {
         return sizes;
     }
 
-    public int getAnimationLock(String limb)
-    {
-        if (aLock.containsKey(limb))
+    public int getAnimationLock(String limb) {
+        if (aLock.containsKey(limb)) {
             return aLock.get(limb);
+        }
 
         return -1;
     }
 
-    public void disableHeadLook(boolean disable, int priority)
-    {
-        if (priority > disableHeadLookPriority)
-        {
+    public void disableHeadLook(boolean disable, int priority) {
+        if (priority > disableHeadLookPriority) {
             disableHeadLookPriority = priority;
             disableHeadLook = disable;
         }
     }
 
-    public boolean isHeadLookDisabled()
-    {
+    public boolean isHeadLookDisabled() {
         return disableHeadLook;
     }
 
-    public int getDisableHeadLookPriority()
-    {
+    public int getDisableHeadLookPriority() {
         return disableHeadLookPriority;
     }
 
     // Returns a list of all limbs used in this pose
-    public Set<String> getLimbs()
-    {
+    public Set<String> getLimbs() {
         return angles.keySet();
     }
 
     // Get all angle frames for the specified limb
-    public ArrayList<Vec3> getAngles(String limb)
-    {
+    public ArrayList<Vec3> getAngles(String limb) {
         return angles.get(limb);
     }
 
     // Clear all angle frames for the specified limb
-    public void clearAngles(String limb)
-    {
+    public void clearAngles(String limb) {
         angles.remove(limb);
         priorities.remove(limb);
         speed.remove(limb);
@@ -153,21 +143,19 @@ public class PlayerPose
     }
 
     // Get all angle frames for the specified limb
-    public ArrayList<Float> getSpeeds(String limb)
-    {
+    public ArrayList<Float> getSpeeds(String limb) {
         return speed.get(limb);
     }
 
-    public void adjustAllSpeeds(float amount)
-    {
+    public void adjustAllSpeeds(float amount) {
         HashMap<String, ArrayList<Float>> newSpeed = new HashMap<>();
 
-        for (String limb : speed.keySet())
-        {
+        for (String limb : speed.keySet()) {
             ArrayList<Float> newSpeeds = new ArrayList<>();
 
-            for (Float oldSpeed : speed.get(limb))
+            for (Float oldSpeed : speed.get(limb)) {
                 newSpeeds.add(oldSpeed / amount);
+            }
 
             newSpeed.put(limb, newSpeeds);
         }
@@ -176,17 +164,14 @@ public class PlayerPose
     }
 
     // Adds angle to specified limb with the specified priority level
-    public void addAngle(String limb, Vec3 angle, int priority)
-    {
+    public void addAngle(String limb, Vec3 angle, int priority) {
         addAngle(limb, angle, priority, AnimationSpeedCalculator.defaultSpeedInTicks, -1);
     }
 
     // Adds angle to specified limb with the specified priority level, speed and animation lock
-    public void addAngle(String limb, Vec3 angle, int priority, Float speedInTicks, int animationLock)
-    {
+    public void addAngle(String limb, Vec3 angle, int priority, Float speedInTicks, int animationLock) {
         // If the specified limb has not been initialised, initialise it
-        if (!angles.containsKey(limb))
-        {
+        if (!angles.containsKey(limb)) {
             angles.put(limb, new ArrayList<Vec3>());
             speed.put(limb, new ArrayList<Float>());
         }
@@ -198,68 +183,65 @@ public class PlayerPose
         aLock.put(limb, animationLock);
     }
 
-    public float getAnimationSpeed(String limb, int frame)
-    {
+    public float getAnimationSpeed(String limb, int frame) {
         return speed.get(limb).get(frame);
     }
 
     // Check if an angle for this limb exists
-    public boolean hasAngle(String limb)
-    {
+    public boolean hasAngle(String limb) {
         return (angles.containsKey(limb));
     }
 
     // Get the angle of the current frame for the specified limb
-    public Vec3 getAngle(String limb, int frame)
-    {
+    public Vec3 getAngle(String limb, int frame) {
         return angles.get(limb).get(frame);
     }
 
     // Get the angle of the first frame for the specified limb
-    public Vec3 getAngle(String limb)
-    {
+    public Vec3 getAngle(String limb) {
         return getAngle(limb, 0);
     }
 
     // Get the number of frames stored in the specified limb
-    public int getFrames(String limb)
-    {
+    public int getFrames(String limb) {
         return angles.get(limb).size();
     }
 
-    public int getPriority(String limb)
-    {
+    public int getPriority(String limb) {
         return priorities.get(limb);
     }
 
     // Combines two player poses
-    public PlayerPose combine(PlayerPose secondPose)
-    {
+    public PlayerPose combine(PlayerPose secondPose) {
         PlayerPose copy = secondPose.clone();
 
         // Loop through every limb in the pose
-        for (String limb : angles.keySet())
-            // Add the limb to the copy if the copy does not contain that limb or the copy's limb has a lower priority
-            if (!copy.hasAngle(limb) || copy.getPriority(limb) < getPriority(limb))
+        for (String limb : angles.keySet()) // Add the limb to the copy if the copy does not contain that limb or the copy's limb has a lower priority
+        {
+            if (!copy.hasAngle(limb) || copy.getPriority(limb) < getPriority(limb)) {
                 copy.setAngles(limb, getAngles(limb), getSpeeds(limb), getPriority(limb), getOffset(limb), getAnimationLock(limb));
+            }
+        }
 
-        for (String limb : sizes.keySet())
+        for (String limb : sizes.keySet()) {
             copy.addSize(limb, sizes.get(limb), sizePriorities.get(limb), sizeSpeed.get(limb));
+        }
 
         copy.disableHeadLook(disableHeadLook, disableHeadLookPriority);
 
         return copy;
     }
 
-    public PlayerPose clone()
-    {
+    public PlayerPose clone() {
         PlayerPose copyPose = new PlayerPose();
 
-        for (String limb : angles.keySet())
-            copyPose.setAngles(limb, (ArrayList<Vec3>)angles.get(limb).clone(), (ArrayList<Float>)speed.get(limb).clone(), priorities.get(limb), offset.get(limb), aLock.get(limb));
+        for (String limb : angles.keySet()) {
+            copyPose.setAngles(limb, (ArrayList<Vec3>) angles.get(limb).clone(), (ArrayList<Float>) speed.get(limb).clone(), priorities.get(limb), offset.get(limb), aLock.get(limb));
+        }
 
-        for (String limb : sizes.keySet())
+        for (String limb : sizes.keySet()) {
             copyPose.addSize(limb, sizes.get(limb), sizePriorities.get(limb), sizeSpeed.get(limb));
+        }
 
         copyPose.disableHeadLook(disableHeadLook, disableHeadLookPriority);
 

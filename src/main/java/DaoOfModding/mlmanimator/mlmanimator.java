@@ -16,17 +16,16 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("mlmanimator")
 public class mlmanimator {
+
     public static final String MODID = "mlmanimator";
 
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public mlmanimator()
-    {
+    public mlmanimator() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::commonInit);
@@ -35,15 +34,13 @@ public class mlmanimator {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.Client.spec, "mlmanimator.toml");
     }
 
-    protected void commonInit(final FMLCommonSetupEvent event)
-    {
+    protected void commonInit(final FMLCommonSetupEvent event) {
         GenericPoses.init();
         Reflection.setup();
         PacketHandler.init();
     }
 
-    protected void clientInit(final FMLClientSetupEvent event)
-    {
+    protected void clientInit(final FMLClientSetupEvent event) {
         MultiLimbedRenderer.setup();
         ClientReflection.setup();
     }

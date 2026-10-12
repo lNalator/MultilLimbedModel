@@ -17,10 +17,11 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.ArrayList;
 
+public class Quad {
 
-public class Quad
-{
-    public static enum QuadVertex { TopLeft, TopRight, BottomRight, BottomLeft };
+    public static enum QuadVertex {
+        TopLeft, TopRight, BottomRight, BottomLeft
+    };
 
     protected static final UVPair texUV[] = {new UVPair(0, 0), new UVPair(1, 0), new UVPair(1, 1), new UVPair(0, 1)};
 
@@ -30,13 +31,11 @@ public class Quad
     protected float alpha = 1;
     protected boolean renderFirstPerson = false;
 
-    public Quad(Vec3 topLeft, Vec3 topRight, Vec3 bottomRight, Vec3 bottomLeft)
-    {
+    public Quad(Vec3 topLeft, Vec3 topRight, Vec3 bottomRight, Vec3 bottomLeft) {
         setPos(topLeft, topRight, bottomRight, bottomLeft);
     }
 
-    public void setPos(Vec3 topLeft, Vec3 topRight, Vec3 bottomRight, Vec3 bottomLeft)
-    {
+    public void setPos(Vec3 topLeft, Vec3 topRight, Vec3 bottomRight, Vec3 bottomLeft) {
         quadPos[0] = topLeft;
         quadPos[1] = topRight;
         quadPos[2] = bottomRight;
@@ -45,102 +44,87 @@ public class Quad
         calculateNormals();
     }
 
-    public void setAlpha(float value)
-    {
+    public void setAlpha(float value) {
         alpha = value;
     }
 
-    public void setRenderFirstPerson(boolean on)
-    {
+    public void setRenderFirstPerson(boolean on) {
         renderFirstPerson = on;
     }
 
-    public boolean getRenderFirstPerson()
-    {
+    public boolean getRenderFirstPerson() {
         return renderFirstPerson;
     }
 
-    public Vec3 getPos(Quad.QuadVertex vertex)
-    {
+    public Vec3 getPos(Quad.QuadVertex vertex) {
         return quadPos[vertex.ordinal()];
     }
 
-    public void setPos(QuadVertex vertex, Vec3 newPos)
-    {
+    public void setPos(QuadVertex vertex, Vec3 newPos) {
         quadPos[vertex.ordinal()] = newPos;
         calculateNormals();
     }
 
-    public void addLayer(UVPair tex, UVPair texSize, float extend, String name)
-    {
+    public void addLayer(UVPair tex, UVPair texSize, float extend, String name) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name);
 
         layers.add(layer);
     }
 
-    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, UVPair UVLock)
-    {
+    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, UVPair UVLock) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name, UVLock);
 
         layers.add(layer);
     }
 
-    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror)
-    {
+    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name, mirror, 1);
 
         layers.add(layer);
     }
 
-    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize)
-    {
+    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name, mirror, textureResize);
 
         layers.add(layer);
     }
 
-    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize, Direction invisibleDirection)
-    {
+    public void addLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize, Direction invisibleDirection) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name, mirror, textureResize);
         layer.setVisable(invisibleDirection, false);
 
         layers.add(layer);
     }
 
-    public void addSmallLayer(UVPair tex, UVPair texSize, float extend, String name)
-    {
+    public void addSmallLayer(UVPair tex, UVPair texSize, float extend, String name) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name);
         layer.setSmall();
 
         layers.add(layer);
     }
 
-    public void addSmallLayer(UVPair tex, UVPair texSize, float extend, String name, UVPair UVLock)
-    {
+    public void addSmallLayer(UVPair tex, UVPair texSize, float extend, String name, UVPair UVLock) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name, UVLock);
         layer.setSmall();
 
         layers.add(layer);
     }
 
-    public void addSmallLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror)
-    {
+    public void addSmallLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name, mirror, 1);
         layer.setSmall();
 
         layers.add(layer);
     }
 
-    public void addSmallLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize)
-    {
+    public void addSmallLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name, mirror, textureResize);
         layer.setSmall();
 
         layers.add(layer);
     }
 
-    public void addSmallLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize, Direction invisibleDirection)
-    {
+    public void addSmallLayer(UVPair tex, UVPair texSize, float extend, String name, boolean mirror, float textureResize, Direction invisibleDirection) {
         ExtendableModelLayer layer = new ExtendableModelLayer(tex, texSize, extend, name, mirror, textureResize);
         layer.setSmall();
         layer.setVisable(invisibleDirection, false);
@@ -148,37 +132,34 @@ public class Quad
         layers.add(layer);
     }
 
-    protected void calculateNormals()
-    {
+    protected void calculateNormals() {
         normal[0] = calculateNormal(quadPos[0], quadPos[3], quadPos[1]);
         normal[1] = calculateNormal(quadPos[1], quadPos[0], quadPos[2]);
         normal[2] = calculateNormal(quadPos[2], quadPos[1], quadPos[3]);
         normal[3] = calculateNormal(quadPos[3], quadPos[2], quadPos[0]);
     }
 
-    protected Vec3 calculateNormal(Vec3 point, Vec3 leftPoint, Vec3 rightPoint)
-    {
+    protected Vec3 calculateNormal(Vec3 point, Vec3 leftPoint, Vec3 rightPoint) {
         return (leftPoint.subtract(point)).cross(rightPoint.subtract(point)).normalize();
     }
 
-    public void render(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, TextureHandler textures)
-    {
+    public void render(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, TextureHandler textures) {
         // Do not render if in first person and set not to render there
-        if (MultiLimbedRenderer.isFakeThirdPerson() && (!renderFirstPerson))
+        if (MultiLimbedRenderer.isFakeThirdPerson() && (!renderFirstPerson)) {
             return;
+        }
 
         // Draw each model layer
-        for (ExtendableModelLayer layer : layers)
-        {
+        for (ExtendableModelLayer layer : layers) {
             ResourceLocation tex;
 
-            if (layer.useSmall())
+            if (layer.useSmall()) {
                 tex = textures.getSmallTexture(layer.getName());
-            else
+            } else {
                 tex = textures.getTexture(layer.getName());
+            }
 
-            if (tex != null)
-            {
+            if (tex != null) {
                 VertexConsumer vertexBuilder = MultiLimbedRenderer.getVertexBuilder(tex);
 
                 Vec3 color = textures.getColor(layer.getName());
@@ -187,14 +168,14 @@ public class Quad
                 Matrix3f stackNormal = PoseStackIn.last().normal();
 
                 // Loop through each vertex
-                for (int i = 0; i < 4; i++)
-                {
+                for (int i = 0; i < 4; i++) {
                     UVPair UV = layer.getUVlock();
 
-                    if (UV == null)
+                    if (UV == null) {
                         UV = texUV[i];
-                    else
+                    } else {
                         UV = new UVPair(UV.u() + texUV[i].u() * 0.001f, UV.v() + texUV[i].v() * 0.001f);
+                    }
 
                     Vector3f floatingNormal = new Vector3f((float) normal[i].x, (float) normal[i].y, (float) normal[i].z);
                     floatingNormal.transform(stackNormal);

@@ -11,8 +11,8 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.UUID;
 
-public class PacketHandler
-{
+public class PacketHandler {
+
     protected static final byte boundingbox = 01;
     protected static final byte eyeheight = 02;
     protected static final byte crawling = 03;
@@ -25,27 +25,23 @@ public class PacketHandler
             PROTOCOL_VERSION::equals
     );
 
-    public static void init()
-    {
+    public static void init() {
         channel.registerMessage(boundingbox, BoundingBoxPacket.class, BoundingBoxPacket::encode, BoundingBoxPacket::decode, BoundingBoxPacket::handle);
         channel.registerMessage(eyeheight, EyeHeightPacket.class, EyeHeightPacket::encode, EyeHeightPacket::decode, EyeHeightPacket::handle);
         channel.registerMessage(crawling, CrawlingPacket.class, CrawlingPacket::encode, CrawlingPacket::decode, CrawlingPacket::handle);
     }
 
-    public static void sendBoundingBoxToServer(Vector3f min, Vector3f max)
-    {
+    public static void sendBoundingBoxToServer(Vector3f min, Vector3f max) {
         BoundingBoxPacket pack = new BoundingBoxPacket(min, max);
         PacketHandler.channel.sendToServer(pack);
     }
 
-    public static void sendEyeHeightToServer(float height)
-    {
+    public static void sendEyeHeightToServer(float height) {
         EyeHeightPacket pack = new EyeHeightPacket(height);
         PacketHandler.channel.sendToServer(pack);
     }
 
-    public static void sendCrawlingToServer(boolean crawl)
-    {
+    public static void sendCrawlingToServer(boolean crawl) {
         CrawlingPacket pack = new CrawlingPacket(crawl);
         PacketHandler.channel.sendToServer(pack);
     }

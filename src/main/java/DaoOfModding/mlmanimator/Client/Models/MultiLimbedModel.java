@@ -39,8 +39,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.*;
 
-public class MultiLimbedModel
-{
+public class MultiLimbedModel {
+
     protected float sizeScale = 1;
     protected Vec3 itemScale = new Vec3(1, 1, 1);
     protected double defaultHeight = 1.5;
@@ -86,33 +86,29 @@ public class MultiLimbedModel
 
     float eyeHeight = 0;
 
-    public MultiLimbedModel(PlayerModel model)
-    {
+    public MultiLimbedModel(PlayerModel model) {
         this(model, true);
     }
 
-    public MultiLimbedModel(PlayerModel model, boolean withLimbs)
-    {
+    public MultiLimbedModel(PlayerModel model, boolean withLimbs) {
         baseModel = model;
 
         slim = MultiLimbedRenderer.isSlim(model);
 
-        if (withLimbs)
+        if (withLimbs) {
             setupDefaultLimbs();
+        }
     }
 
-    public TextureHandler getTextureHandler()
-    {
+    public TextureHandler getTextureHandler() {
         return textures;
     }
 
-    public void setTextureHandler(TextureHandler handler)
-    {
+    public void setTextureHandler(TextureHandler handler) {
         textures = handler;
     }
 
-    protected void setupDefaultLimbs()
-    {
+    protected void setupDefaultLimbs() {
         ExtendableModelRenderer body = new ExtendableModelRenderer(GenericLimbNames.body);
         GenericTextureValues.addGenericBodyLayers(body);
         body.setPos(0, 0, 0);
@@ -132,13 +128,10 @@ public class MultiLimbedModel
         GenericTextureValues.addGenericRightArmLayers(rightArm);
         rightArm.setRotationPoint(new Vec3(0.5D, 0.66D, 0.5D));
         rightArm.setPos(0.0F, 0.0F, 0.5F);
-        if (slim)
-        {
+        if (slim) {
             rightArm.setFixedPosAdjustment(-1.5F, 2F, 0.0F);
             rightArm.extend(GenericResizers.getSlimArmResizer());
-        }
-        else
-        {
+        } else {
             rightArm.setFixedPosAdjustment(-2F, 2F, 0.0F);
             rightArm.extend(GenericResizers.getArmResizer());
         }
@@ -151,13 +144,10 @@ public class MultiLimbedModel
         GenericTextureValues.addGenericLeftArmLayers(leftArm);
         leftArm.setRotationPoint(new Vec3(0.5D, 0.66D, 0.5D));
         leftArm.setPos(1.0F, 0.0F, 0.5F);
-        if (slim)
-        {
+        if (slim) {
             leftArm.setFixedPosAdjustment(1.5F, 2F, 0.0F);
             leftArm.extend(GenericResizers.getSlimArmResizer());
-        }
-        else
-        {
+        } else {
             leftArm.setFixedPosAdjustment(2F, 2F, 0.0F);
             leftArm.extend(GenericResizers.getArmResizer());
         }
@@ -190,7 +180,6 @@ public class MultiLimbedModel
         addLimbReference(GenericLimbNames.lowerRightArm, rightArm.getChildren().get(0));
         addLimbReference(GenericLimbNames.lowerLeftLeg, leftLeg.getChildren().get(0));
         addLimbReference(GenericLimbNames.lowerRightLeg, rightLeg.getChildren().get(0));
-
 
         ExtendableElytraRenderer leftWing = new ExtendableElytraRenderer(GenericLimbNames.leftWingElytra);
         leftWing.addLayer(GenericTextureValues.elytra, GenericTextureValues.armor_Size, GenericTextureValues.innerExtention, TextureHandler.ELYTRA);
@@ -227,7 +216,6 @@ public class MultiLimbedModel
 
         // BeeStinger/Arrows are things stuck in the player, may ignore for now
         // Ears are for ONE custom skin, screw that
-
         setViewPoint(head);
         setHand(0, rightArm.getChildren().get(0));
         setHand(1, leftArm.getChildren().get(0));
@@ -235,100 +223,90 @@ public class MultiLimbedModel
         setRightShoulder(rightArm);
     }
 
-    public void setLeftShoulder(ExtendableModelRenderer lShoulder)
-    {
+    public void setLeftShoulder(ExtendableModelRenderer lShoulder) {
         leftShoulderModel = lShoulder;
     }
 
-    public void setRightShoulder(ExtendableModelRenderer rShoulder)
-    {
+    public void setRightShoulder(ExtendableModelRenderer rShoulder) {
         rightShoulderModel = rShoulder;
     }
 
-    public PlayerModel getBaseModel()
-    {
+    public PlayerModel getBaseModel() {
         return baseModel;
     }
 
-    public void setHand(int slot, ExtendableModelRenderer hand)
-    {
-        if (hands.length < slot)
+    public void setHand(int slot, ExtendableModelRenderer hand) {
+        if (hands.length < slot) {
             expandHands(slot);
+        }
 
         hands[slot] = hand;
     }
 
-    public void scaleItem(Vec3 scale)
-    {
+    public void scaleItem(Vec3 scale) {
         itemScale = itemScale.multiply(scale);
     }
 
-    public void resetItemScale()
-    {
+    public void resetItemScale() {
         itemScale = new Vec3(1, 1, 1);
     }
 
-    protected void expandHands(int size)
-    {
+    protected void expandHands(int size) {
         ExtendableModelRenderer[] newHands = new ExtendableModelRenderer[size];
 
-        for (int i = 0; i < hands.length; i++)
+        for (int i = 0; i < hands.length; i++) {
             newHands[i] = hands[i];
+        }
 
         hands = newHands;
     }
 
-    public ExtendableModelRenderer getHand(int slot)
-    {
+    public ExtendableModelRenderer getHand(int slot) {
         return hands[slot];
     }
 
-    public ExtendableModelRenderer[] getHands()
-    {
+    public ExtendableModelRenderer[] getHands() {
         return hands;
     }
 
-    public void setViewPoint(ExtendableModelRenderer model)
-    {
+    public void setViewPoint(ExtendableModelRenderer model) {
         viewPoint = model;
     }
 
     // Stop multi-threading breaking stuff via locking
-    public void lock()
-    {
-        while (lock) {}
+    public void lock() {
+        while (lock) {
+        }
 
         lock = true;
     }
 
-    public void unlock()
-    {
+    public void unlock() {
         lock = false;
     }
 
-    public ParrotModel getParrotModel()
-    {
+    public ParrotModel getParrotModel() {
         return parrot;
     }
 
-    public void setParrotModel(ParrotModel parrotModel)
-    {
+    public void setParrotModel(ParrotModel parrotModel) {
         parrot = parrotModel;
     }
 
-    public void updateSkull(AbstractClientPlayer player, PlayerRenderer renderer)
-    {
+    public void updateSkull(AbstractClientPlayer player, PlayerRenderer renderer) {
         ItemStack itemstack = player.getItemBySlot(EquipmentSlot.HEAD);
 
         SkullBlock.Type skullType = null;
 
-        if (!itemstack.isEmpty())
-            if (itemstack.getItem() instanceof BlockItem)
-                if (((BlockItem)itemstack.getItem()).getBlock() instanceof AbstractSkullBlock)
-                    skullType = ((AbstractSkullBlock)((BlockItem)itemstack.getItem()).getBlock()).getType();
+        if (!itemstack.isEmpty()) {
+            if (itemstack.getItem() instanceof BlockItem) {
+                if (((BlockItem) itemstack.getItem()).getBlock() instanceof AbstractSkullBlock) {
+                    skullType = ((AbstractSkullBlock) ((BlockItem) itemstack.getItem()).getBlock()).getType();
+                }
+            }
+        }
 
-        if (skullType == null)
-        {
+        if (skullType == null) {
             skullmodelbase = null;
             skullrendertype = null;
             return;
@@ -346,55 +324,49 @@ public class MultiLimbedModel
         skullrendertype = SkullBlockRenderer.getRenderType(skullType, gameprofile);
     }
 
-    public ExtendableModelRenderer getViewPoint()
-    {
+    public ExtendableModelRenderer getViewPoint() {
         return viewPoint;
     }
 
     // Returns a list of all limbs on this model
-    public Set<String> getLimbs()
-    {
+    public Set<String> getLimbs() {
         return limbs.keySet();
     }
 
     // Returns a list of all first person limbs on this model
-    public Set<String> getAllLimbs()
-    {
+    public Set<String> getAllLimbs() {
         return allLimbs.keySet();
     }
 
-    public ExtendableModelRenderer getBody()
-    {
+    public ExtendableModelRenderer getBody() {
         return body;
     }
 
     // Apply the supplied rotations to the specified limb
-    public void rotateLimb(String limb, Vec3 angles)
-    {
-        if (!hasLimb(limb))
+    public void rotateLimb(String limb, Vec3 angles) {
+        if (!hasLimb(limb)) {
             return;
+        }
 
         ExtendableModelRenderer limbModel = getLimb(limb);
 
-        if (limbModel == null)
+        if (limbModel == null) {
             limbModel = getFirstPersonLimb(limb);
+        }
 
-        limbModel.rotate((float)angles.x, (float) angles.y, (float) angles.z);
+        limbModel.rotate((float) angles.x, (float) angles.y, (float) angles.z);
     }
 
     // Returns true if this model contains the specified limb
-    public boolean hasLimb(String limb)
-    {
+    public boolean hasLimb(String limb) {
         return allLimbs.containsKey(limb);
     }
 
-    public ExtendableModelRenderer getLimb(String limb)
-    {
+    public ExtendableModelRenderer getLimb(String limb) {
         return limbs.get(limb);
     }
 
-    public void addBody(ExtendableModelRenderer bodyModel)
-    {
+    public void addBody(ExtendableModelRenderer bodyModel) {
         lock();
 
         ExtendableModelRenderer newBody = bodyModel.clone();
@@ -402,16 +374,16 @@ public class MultiLimbedModel
         limbs.put(GenericLimbNames.body, newBody);
         allLimbs.put(GenericLimbNames.body, newBody);
 
-        if (body != null)
+        if (body != null) {
             body.fosterChildren(newBody);
+        }
 
         body = newBody;
 
         unlock();
     }
 
-    public void tick(AbstractClientPlayer player)
-    {
+    public void tick(AbstractClientPlayer player) {
         lock();
 
         body.tick(player);
@@ -420,47 +392,46 @@ public class MultiLimbedModel
         unlock();
     }
 
-    protected void updateShoulder(Player player)
-    {
+    protected void updateShoulder(Player player) {
         // Do nothing if the parrot model does not currently exist
-        if (parrot == null)
+        if (parrot == null) {
             return;
+        }
 
-        if (player.getShoulderEntityLeft().getString("id").equals("minecraft:parrot"))
+        if (player.getShoulderEntityLeft().getString("id").equals("minecraft:parrot")) {
             leftShoulder = parrot.renderType(ParrotRenderer.PARROT_LOCATIONS[player.getShoulderEntityLeft().getInt("Variant")]);
-        else
+        } else {
             leftShoulder = null;
+        }
 
-        if (player.getShoulderEntityRight().getString("id").equals("minecraft:parrot"))
+        if (player.getShoulderEntityRight().getString("id").equals("minecraft:parrot")) {
             rightShoulder = parrot.renderType(ParrotRenderer.PARROT_LOCATIONS[player.getShoulderEntityRight().getInt("Variant")]);
-        else
+        } else {
             rightShoulder = null;
+        }
     }
 
     // Adds specified limb onto the body
-    public void addLimb(String limb, ExtendableModelRenderer limbModel)
-    {
+    public void addLimb(String limb, ExtendableModelRenderer limbModel) {
         addLimb(limb, limbModel, GenericLimbNames.body);
     }
 
     // Updates the armor textures for all player body parts
-    public void updateArmorsTextures(AbstractClientPlayer player)
-    {
+    public void updateArmorsTextures(AbstractClientPlayer player) {
         textures.updateArmorTextures(player);
     }
 
     // Adds specified limb onto the specified limb
-    public void addLimb(String limb, ExtendableModelRenderer limbModel, String addTo)
-    {
+    public void addLimb(String limb, ExtendableModelRenderer limbModel, String addTo) {
         lock();
 
         ExtendableModelRenderer toAdd = getLimb(addTo);
 
-        if (toAdd == null)
+        if (toAdd == null) {
             toAdd = getFirstPersonLimb(addTo);
+        }
 
-        if (toAdd != null)
-        {
+        if (toAdd != null) {
             toAdd.addChild(limbModel);
             addLimbReference(limb, limbModel);
         }
@@ -468,8 +439,7 @@ public class MultiLimbedModel
         unlock();
     }
 
-    public void removeLimb(String limb)
-    {
+    public void removeLimb(String limb) {
         lock();
 
         body.removeChild(limbs.get(limb));
@@ -480,64 +450,53 @@ public class MultiLimbedModel
     }
 
     // Adds specified limb into the first person render list
-    public void addFirstPersonLimb(String limb, ExtendableModelRenderer limbModel)
-    {
+    public void addFirstPersonLimb(String limb, ExtendableModelRenderer limbModel) {
         firstPersonLimbs.put(limb, limbModel);
         allLimbs.put(limb, limbModel);
     }
 
-    public ExtendableModelRenderer getFirstPersonLimb(String limb)
-    {
+    public ExtendableModelRenderer getFirstPersonLimb(String limb) {
         return firstPersonLimbs.get(limb);
     }
 
-    public HashMap<String, ExtendableModelRenderer> getFirstPersonLimbs()
-    {
+    public HashMap<String, ExtendableModelRenderer> getFirstPersonLimbs() {
         return firstPersonLimbs;
     }
 
-
     // Add a limb for reference purposes
     // Usually used for referencing child limbs
-    public void addLimbReference(String limb, ExtendableModelRenderer limbModel)
-    {
+    public void addLimbReference(String limb, ExtendableModelRenderer limbModel) {
         limbs.put(limb, limbModel);
         allLimbs.put(limb, limbModel);
     }
 
-    public void setupAnim(float netHeadYaw, float headPitch)
-    {
-        lookVector = new Vec3(headPitch * ((float)Math.PI / 180F), netHeadYaw * ((float)Math.PI / 180F), 0);
+    public void setupAnim(float netHeadYaw, float headPitch) {
+        lookVector = new Vec3(headPitch * ((float) Math.PI / 180F), netHeadYaw * ((float) Math.PI / 180F), 0);
 
         // baseModel.setupAnim(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     }
 
-    public void setupLookVector(Vec3 newLookVector)
-    {
+    public void setupLookVector(Vec3 newLookVector) {
         lookVector = newLookVector;
     }
 
-    public Vec3 getLookVector()
-    {
+    public Vec3 getLookVector() {
         return lookVector;
     }
 
     // Get a vector indicating the direction a hand holding an item should be rotated
-    public Vec3 getHoldingVector()
-    {
+    public Vec3 getHoldingVector() {
         return new Vec3(getLookVector().x() / 1.5, getLookVector().y(), getLookVector().z());
     }
 
-    public void handleBBChange(Player player, boolean handleCollisions)
-    {
+    public void handleBBChange(Player player, boolean handleCollisions) {
         bbecho -= 1;
-        if (bbchange)
+        if (bbchange) {
             bbecho = 20;
-
+        }
 
         // Move the player so they are not colliding with anything
-        if (handleCollisions && bbchange && !player.level.noCollision(player, player.getBoundingBox()))
-        {
+        if (handleCollisions && bbchange && !player.level.noCollision(player, player.getBoundingBox())) {
             VoxelShape voxelshape = Shapes.create(player.getBoundingBox());
             Vec3 vec3 = player.position().add(0.0D, (double) size.getHeight() / 2.0D, 0.0D);
 
@@ -547,53 +506,51 @@ public class MultiLimbedModel
         }
 
         // Resend bounding box to server 20 ticks after last send
-        if (bbecho == 0)
-        {
+        if (bbecho == 0) {
             PacketHandler.sendBoundingBoxToServer(size.minSize, size.maxSize);
             bbecho = 20;
             return;
         }
 
-        if (!bbchange)
+        if (!bbchange) {
             return;
+        }
 
         // Send the changed bounding box to the server
         PacketHandler.sendBoundingBoxToServer(size.minSize, size.maxSize);
         bbchange = false;
     }
 
-    public RenderType renderType(ResourceLocation resourcelocation)
-    {
+    public RenderType renderType(ResourceLocation resourcelocation) {
         return baseModel.renderType(resourcelocation);
     }
 
     // Render models that only appear in first person
-    public void renderFirstPerson(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
-    {
+    public void renderFirstPerson(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         lock();
 
         PoseStackIn.pushPose();
 
-        for (ExtendableModelRenderer model : firstPersonLimbs.values())
+        for (ExtendableModelRenderer model : firstPersonLimbs.values()) {
             model.render(PoseStackIn, packedLightIn, packedOverlayIn, red, green, blue, alpha, textures);
+        }
 
         PoseStackIn.popPose();
 
         unlock();
     }
 
-    public void hideHands(Boolean on)
-    {
-        for (ExtendableModelRenderer hand : hands)
+    public void hideHands(Boolean on) {
+        for (ExtendableModelRenderer hand : hands) {
             hand.setFirstPersonRender(!on);
+        }
     }
 
-    public void render(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
-    {
+    public void render(PoseStack PoseStackIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         PoseStackIn.pushPose();
 
         // Scale the model to match the scale size, and move it up or down so it's standing at the right height
-        PoseStackIn.translate(0.0D, (1-sizeScale) * defaultHeight, 0.0D);
+        PoseStackIn.translate(0.0D, (1 - sizeScale) * defaultHeight, 0.0D);
 
         PoseStackIn.scale(sizeScale, sizeScale, sizeScale);
 
@@ -603,11 +560,9 @@ public class MultiLimbedModel
         PoseStackIn.popPose();
     }
 
-    public void renderHead(PoseStack PoseStackIn, MultiBufferSource renderTypeBuffer, int packedLightIn, float red, float green, float blue, float alpha, int ticks)
-    {
+    public void renderHead(PoseStack PoseStackIn, MultiBufferSource renderTypeBuffer, int packedLightIn, float red, float green, float blue, float alpha, int ticks) {
         // If there is no custom skull, make the head visible and do nothing
-        if (skullmodelbase == null)
-        {
+        if (skullmodelbase == null) {
             getViewPoint().mPart.visible = true;
             return;
         }
@@ -621,31 +576,28 @@ public class MultiLimbedModel
         getViewPoint().translatePoseStackToThis(PoseStackIn);
 
         Vec3 size = getViewPoint().getSize();
-        PoseStackIn.scale((float)size.x() + 0.1875F, (float)size.y() + 0.1875F, (float)size.z() + 0.1875F);
+        PoseStackIn.scale((float) size.x() + 0.1875F, (float) size.y() + 0.1875F, (float) size.z() + 0.1875F);
 
         Vec3 pos = getViewPoint().translateRelativePosition(new Vec3(-0.5f, 1.5f, 1.5f));
-        PoseStackIn.translate((double)(pos.x / 16.0F), (double)(pos.y / 16.0F), (double)(pos.z / 16.0F));
+        PoseStackIn.translate((double) (pos.x / 16.0F), (double) (pos.y / 16.0F), (double) (pos.z / 16.0F));
 
-        PoseStackIn.mulPose(Vector3f.ZP.rotation((float)Math.toRadians(180f)));
-        PoseStackIn.mulPose(Vector3f.YP.rotation((float)Math.toRadians(180f)));
-
+        PoseStackIn.mulPose(Vector3f.ZP.rotation((float) Math.toRadians(180f)));
+        PoseStackIn.mulPose(Vector3f.YP.rotation((float) Math.toRadians(180f)));
 
         SkullBlockRenderer.renderSkull(null, 180.0F, red, PoseStackIn, renderTypeBuffer, packedLightIn, skullmodelbase, skullrendertype);
 
         PoseStackIn.popPose();
     }
 
-    public void renderShoulder(PoseStack PoseStackIn, MultiBufferSource renderTypeBuffer, int packedLightIn, float red, float green, float blue, float alpha, int ticks)
-    {
+    public void renderShoulder(PoseStack PoseStackIn, MultiBufferSource renderTypeBuffer, int packedLightIn, float red, float green, float blue, float alpha, int ticks) {
         //This appears sorta janky when moving, but so does VANILLA minecraft, so...
-        if (leftShoulder != null && leftShoulderModel != null)
-        {
+        if (leftShoulder != null && leftShoulderModel != null) {
             PoseStackIn.pushPose();
 
             leftShoulderModel.translatePoseStackToThis(PoseStackIn);
             // WHY 6 AND NOT 16!? I DON'T KNOW
-            Vec3 move = leftShoulderModel.translateRelativePosition(new Vec3(0.5, -1, 0.5)).scale(sizeScale/6f);
-            PoseStackIn.translate(move.x, move.y -0.125f, move.z);
+            Vec3 move = leftShoulderModel.translateRelativePosition(new Vec3(0.5, -1, 0.5)).scale(sizeScale / 6f);
+            PoseStackIn.translate(move.x, move.y - 0.125f, move.z);
 
             VertexConsumer vertexconsumer = renderTypeBuffer.getBuffer(leftShoulder);
             parrot.renderOnShoulder(PoseStackIn, vertexconsumer, packedLightIn, OverlayTexture.NO_OVERLAY, red, green, blue, alpha, ticks);
@@ -653,14 +605,13 @@ public class MultiLimbedModel
             PoseStackIn.popPose();
         }
 
-        if (rightShoulder != null && rightShoulderModel != null)
-        {
+        if (rightShoulder != null && rightShoulderModel != null) {
             PoseStackIn.pushPose();
 
             leftShoulderModel.translatePoseStackToThis(PoseStackIn);
             // WHY 6 AND NOT 16!? I DON'T KNOW
-            Vec3 move = rightShoulderModel.translateRelativePosition(new Vec3(0.5, -1, 0.5)).scale(sizeScale/6f);
-            PoseStackIn.translate(move.x, move.y -0.125f, move.z);
+            Vec3 move = rightShoulderModel.translateRelativePosition(new Vec3(0.5, -1, 0.5)).scale(sizeScale / 6f);
+            PoseStackIn.translate(move.x, move.y - 0.125f, move.z);
 
             VertexConsumer vertexconsumer = renderTypeBuffer.getBuffer(rightShoulder);
             parrot.renderOnShoulder(PoseStackIn, vertexconsumer, packedLightIn, OverlayTexture.NO_OVERLAY, red, green, blue, alpha, ticks);
@@ -669,89 +620,88 @@ public class MultiLimbedModel
         }
     }
 
-    public void renderHandItem(boolean left, int slot, LivingEntity entityIn, ItemStack item, PoseStack PoseStackIn, MultiBufferSource renderTypeBuffer, int packedLightIn)
-    {
+    public void renderHandItem(boolean left, int slot, LivingEntity entityIn, ItemStack item, PoseStack PoseStackIn, MultiBufferSource renderTypeBuffer, int packedLightIn) {
         // Don't do anything if nothing is held
-        if (item.isEmpty())
+        if (item.isEmpty()) {
             return;
+        }
 
         // Don't do anything if this hand doesn't exist
         ExtendableModelRenderer hand = hands[slot];
-        if (hand == null)
+        if (hand == null) {
             return;
+        }
 
         PoseStackIn.pushPose();
 
         //TODO: FIX THIS
-
         // Transform the camera based depending on which hand is holding the item
         ItemTransforms.TransformType cameraTransform = ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND;
-        if (left)
+        if (left) {
             cameraTransform = ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND;
+        }
 
         // If the item being held is a used spyglass, attach to the head instead
-        if (entityIn.getUseItemRemainingTicks() > 0 && item.getUseAnimation() == UseAnim.SPYGLASS)
+        if (entityIn.getUseItemRemainingTicks() > 0 && item.getUseAnimation() == UseAnim.SPYGLASS) {
             getViewPoint().moveToThisModel(PoseStackIn, new Vec3(-0.25, -0.5, -1));
-        // Rotate the item to the hand
-        else
+        }// Rotate the item to the hand
+        else {
             hand.moveToThisModel(PoseStackIn, new Vec3(0, 1, -1));
+        }
 
         // Turn the item around to fit in the hand
         PoseStackIn.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
         PoseStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
 
-        PoseStackIn.scale((float)itemScale.x, (float)itemScale.y, (float)itemScale.z);
+        PoseStackIn.scale((float) itemScale.x, (float) itemScale.y, (float) itemScale.z);
 
         // Render the item
         Minecraft.getInstance().gameRenderer.itemInHandRenderer.renderItem(entityIn, item, cameraTransform, left, PoseStackIn, renderTypeBuffer, packedLightIn);
 
-
         PoseStackIn.popPose();
     }
 
-    public void calculateEyeHeight()
-    {
+    public void calculateEyeHeight() {
         PoseStack stack2 = new PoseStack();
         getViewPoint().parent.translatePoseStackToThis(stack2);
 
         Vec3 move = getViewPoint().parent.translateRelativePosition(getViewPoint().relativePosition);
         move = move.subtract(getViewPoint().fixedPosition);
-        move = move.scale(sizeScale/16f);
+        move = move.scale(sizeScale / 16f);
         stack2.translate(move.x, move.y, move.z);
 
         Vector4f testVec = new Vector4f(0f, 0f, 0f, 1f);
         testVec.transform(stack2.last().pose());
 
-        eyeHeight = testVec.y() - getHeightAdjustment() - (float)(getViewPoint().getSize().y() * 0.3f);
+        eyeHeight = testVec.y() - getHeightAdjustment() - (float) (getViewPoint().getSize().y() * 0.3f);
 
         // Check to make sure the eye height is not higher than the hitbox
         float height = getHeight();
 
-        if (eyeHeight < height)
+        if (eyeHeight < height) {
             eyeHeight = height;
+        }
 
-        if (eyeHeight > -0.1f)
+        if (eyeHeight > -0.1f) {
             eyeHeight = -0.1f;
+        }
 
         // Increase the eyeHeight by the eyeHeightAdjustment, ignoring height limits
         eyeHeight -= eyeHeightAdjustment;
     }
 
-    public float getEyeHeight()
-    {
+    public float getEyeHeight() {
         return eyeHeight;
     }
 
-    public void setEyeHeightAdjustment(float value)
-    {
+    public void setEyeHeightAdjustment(float value) {
         eyeHeightAdjustment = value;
     }
 
     // Calculate the height adjustment for each limb
-    public void calculateHeightAdjustment(Player player)
-    {
+    public void calculateHeightAdjustment(Player player) {
         // Only calculate sizes at 90 degree angles
-        float rotation = (int)((Mth.wrapDegrees(player.yBodyRot) + 45) / 90) * 90;
+        float rotation = (int) ((Mth.wrapDegrees(player.yBodyRot) + 45) / 90) * 90;
 
         float oldWidth = player.getBbWidth();
         float oldHeight = player.getBbHeight();
@@ -761,48 +711,49 @@ public class MultiLimbedModel
         size.scaleValues(sizeScale / 16f);
         size = new MultiLimbedDimensions(size);
 
-        for (ExtendableModelRenderer model : firstPersonLimbs.values())
+        for (ExtendableModelRenderer model : firstPersonLimbs.values()) {
             model.calculateMinHeight(new PoseStack(), 0);
+        }
 
-        float heightSpacing = 1.0f/16.0f;
+        float heightSpacing = 1.0f / 16.0f;
 
         // Calculate the eye height and increase the bounding box height if needed
         calculateEyeHeight();
 
-        if (getEyeHeight() < getHeight() + heightSpacing)
+        if (getEyeHeight() < getHeight() + heightSpacing) {
             size.increaseHeight((eyeHeight - getHeight()) * -1 + heightSpacing);
+        }
 
         Reflection.setDimensions(player, new EntityDimensions(size.getSmallestWidth(), size.getHeight(), false));
         player.setBoundingBox(size.makeBoundingBox(player.position()));
 
         // Mark the bounding box as changed if it has changed size
-        if (player.isLocalPlayer() && (oldWidth != player.getBbWidth() || oldHeight != player.getBbHeight()))
+        if (player.isLocalPlayer() && (oldWidth != player.getBbWidth() || oldHeight != player.getBbHeight())) {
             bbchange = true;
+        }
     }
 
-    public MultiLimbedDimensions getSize()
-    {
+    public MultiLimbedDimensions getSize() {
         return size;
     }
 
-    public Vec3 getMidPos()
-    {
+    public Vec3 getMidPos() {
         return getViewPoint().getDimensions().getMidPoint().scale(sizeScale / 8f);
     }
 
-    public float getHeight()
-    {
-        if (size != null)
+    public float getHeight() {
+        if (size != null) {
             return size.maxSize.y() - size.minSize.y();
+        }
 
         return 0;
     }
 
     // Find the limb at the lowest height and return it's height
-    public float getHeightAdjustment()
-    {
-        if (size != null)
+    public float getHeightAdjustment() {
+        if (size != null) {
             return size.minSize.y();
+        }
 
         return 0;
     }

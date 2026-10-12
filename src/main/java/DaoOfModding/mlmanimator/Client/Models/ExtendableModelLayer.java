@@ -7,8 +7,8 @@ import net.minecraft.world.phys.Vec3;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ExtendableModelLayer
-{
+public class ExtendableModelLayer {
+
     protected String name;
 
     protected UVPair textureOffset;
@@ -28,20 +28,17 @@ public class ExtendableModelLayer
 
     protected boolean useSmall = false;
 
-    public ExtendableModelLayer(UVPair texOffset, UVPair texSize, float extend, String newName)
-    {
+    public ExtendableModelLayer(UVPair texOffset, UVPair texSize, float extend, String newName) {
         this(texOffset, texSize, extend, newName, false, 1);
     }
 
-    public ExtendableModelLayer(UVPair texOffset, UVPair texSize, float extend, String newName, UVPair lockedUV)
-    {
+    public ExtendableModelLayer(UVPair texOffset, UVPair texSize, float extend, String newName, UVPair lockedUV) {
         this(texOffset, texSize, extend, newName, false, 1);
 
         lockUV(lockedUV);
     }
 
-    public ExtendableModelLayer(UVPair texOffset, UVPair texSize, float extend, String newName, boolean mirror, float texResize)
-    {
+    public ExtendableModelLayer(UVPair texOffset, UVPair texSize, float extend, String newName, boolean mirror, float texResize) {
         textureOffset = new UVPair(texOffset.u(), texOffset.v());
         textureSize = new UVPair(texSize.u(), texSize.v());
         extended = extend;
@@ -50,66 +47,57 @@ public class ExtendableModelLayer
         textureResize = texResize;
     }
 
-    public ExtendableModelLayer(UVPair texOffset, UVPair texSize, float extend, String newName, boolean mirror, float texResize, UVPair lockedUV)
-    {
+    public ExtendableModelLayer(UVPair texOffset, UVPair texSize, float extend, String newName, boolean mirror, float texResize, UVPair lockedUV) {
         this(texOffset, texSize, extend, newName, mirror, texResize);
 
         lockUV(lockedUV);
     }
 
-    public void setSmall()
-    {
+    public void setSmall() {
         useSmall = true;
     }
 
-    public boolean useSmall()
-    {
+    public boolean useSmall() {
         return useSmall;
     }
 
-    public void lockUV(UVPair lock)
-    {
+    public void lockUV(UVPair lock) {
         UVlock = lock;
     }
 
-    public UVPair getUVlock()
-    {
+    public UVPair getUVlock() {
         return UVlock;
     }
 
-    public UVPair getTextureOffset()
-    {
+    public UVPair getTextureOffset() {
         return textureOffset;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void makeCube(float posX, float posY, float posZ, float width, float height, float depth, Vec3 fullSize)
-    {
-        layerCube = new ExtendableCube((int)textureOffset.u(), (int)textureOffset.v(), posX, posY, posZ, width, height, depth, extended, extended, extended, mirr, textureSize.u(), textureSize.v(), fullSize, textureResize);
+    public void makeCube(float posX, float posY, float posZ, float width, float height, float depth, Vec3 fullSize) {
+        layerCube = new ExtendableCube((int) textureOffset.u(), (int) textureOffset.v(), posX, posY, posZ, width, height, depth, extended, extended, extended, mirr, textureSize.u(), textureSize.v(), fullSize, textureResize);
 
         updateCubeVisability();
     }
 
-    public void setVisable(Direction dir, Boolean on)
-    {
+    public void setVisable(Direction dir, Boolean on) {
         visability.put(dir, on);
 
-        if (layerCube != null)
+        if (layerCube != null) {
             updateCubeVisability();
+        }
     }
 
-    protected void updateCubeVisability()
-    {
-        for (Map.Entry<Direction, Boolean> set : visability.entrySet())
+    protected void updateCubeVisability() {
+        for (Map.Entry<Direction, Boolean> set : visability.entrySet()) {
             layerCube.setVisable(set.getKey(), set.getValue());
+        }
     }
 
-    public ExtendableModelLayer clone()
-    {
+    public ExtendableModelLayer clone() {
         return new ExtendableModelLayer(textureOffset, textureSize, extended, name, mirr, textureResize);
     }
 }

@@ -1,7 +1,7 @@
 package DaoOfModding.mlmanimator.Client.Models;
 
-public class GenericLimbNames
-{
+public class GenericLimbNames {
+
     public static final String head = "Head";
     public static final String body = "Body";
 

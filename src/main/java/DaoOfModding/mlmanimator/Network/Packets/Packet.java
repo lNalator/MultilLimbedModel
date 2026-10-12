@@ -13,15 +13,12 @@ public class Packet {
     }
 
     // Called once the message is sent, encodes data into the buffer to send
-    public void encode(FriendlyByteBuf buffer)
-    {
+    public void encode(FriendlyByteBuf buffer) {
     }
 
     // Called once a message of this type is received, put code to handle the received message here
     // public static Packet decode(FriendlyByteBuf buffer)
-
-    public void handle(Supplier<NetworkEvent.Context> context)
-    {
+    public void handle(Supplier<NetworkEvent.Context> context) {
         /*
         Player player
 
@@ -31,13 +28,11 @@ public class Packet {
             handleServer(player);*/
     }
 
-    public void handleClient(Player player)
-    {
+    public void handleClient(Player player) {
 
     }
 
-    public void handleServer(Player player)
-    {
+    public void handleServer(Player player) {
 
     }
 

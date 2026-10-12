@@ -7,8 +7,8 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 
-public class defaultResizeModule implements resizeModule
-{
+public class defaultResizeModule implements resizeModule {
+
     protected int depth;
 
     protected Vec3 usedSize;
@@ -27,34 +27,28 @@ public class defaultResizeModule implements resizeModule
 
     protected float delta = 0;
 
-    public defaultResizeModule(int maxDepth, Vec3 direction, Vec3 position, Vec3 fullSize, Vec3 rotationPoint)
-    {
+    public defaultResizeModule(int maxDepth, Vec3 direction, Vec3 position, Vec3 fullSize, Vec3 rotationPoint) {
         this(maxDepth, direction, position, fullSize, rotationPoint, new Vec3(0, 0, 0));
     }
 
-    public defaultResizeModule(int maxDepth, Vec3 direction, Vec3 position, Vec3 fullSize, Vec3 rotationPoint, @Nullable Direction t, @Nullable Direction b)
-    {
+    public defaultResizeModule(int maxDepth, Vec3 direction, Vec3 position, Vec3 fullSize, Vec3 rotationPoint, @Nullable Direction t, @Nullable Direction b) {
         this(maxDepth, direction, position, fullSize, rotationPoint, new Vec3(0, 0, 0), 0, t, b);
     }
 
-    public defaultResizeModule(int maxDepth, Vec3 direction, Vec3 position, Vec3 fullSize, Vec3 rotationPoint, float delta)
-    {
+    public defaultResizeModule(int maxDepth, Vec3 direction, Vec3 position, Vec3 fullSize, Vec3 rotationPoint, float delta) {
         this(maxDepth, direction, position, fullSize, rotationPoint, new Vec3(0, 0, 0), delta, null, null);
     }
 
     // Default resize module for models of depth 1
-    public defaultResizeModule(Vec3 fullSize)
-    {
+    public defaultResizeModule(Vec3 fullSize) {
         this(1, new Vec3(0, 1, 0), new Vec3(0, 0, 0), fullSize, new Vec3(0, 0, 0), new Vec3(0, 0, 0));
     }
 
-    public defaultResizeModule(int maxDepth, Vec3 direction, Vec3 position, Vec3 fullSize, Vec3 rotationPoint, Vec3 spacing)
-    {
-        this (maxDepth, direction, position, fullSize, rotationPoint, spacing, 0, null, null);
+    public defaultResizeModule(int maxDepth, Vec3 direction, Vec3 position, Vec3 fullSize, Vec3 rotationPoint, Vec3 spacing) {
+        this(maxDepth, direction, position, fullSize, rotationPoint, spacing, 0, null, null);
     }
 
-    public defaultResizeModule(int maxDepth, Vec3 direction, Vec3 position, Vec3 fullSize, Vec3 rotationPoint, Vec3 spacing, float newDelta, @Nullable Direction t, @Nullable Direction b)
-    {
+    public defaultResizeModule(int maxDepth, Vec3 direction, Vec3 position, Vec3 fullSize, Vec3 rotationPoint, Vec3 spacing, float newDelta, @Nullable Direction t, @Nullable Direction b) {
         top = t;
         bottom = b;
 
@@ -73,44 +67,39 @@ public class defaultResizeModule implements resizeModule
         this.spacing = spacing;
     }
 
-    public Vec3 getPosition()
-    {
+    public Vec3 getPosition() {
         return position;
     }
 
-    public Vec3 getSize()
-    {
+    public Vec3 getSize() {
         Vec3 directedSize = size.multiply(absDirection);
 
         // Calculate the size of this model, and the size remaining to make models for
-        Vec3 thisSize = size.subtract(directedSize.scale((double)(depth-1)/(double)depth).add(spacing));
-        size = size.subtract(directedSize.scale((double)1/(double)depth));
+        Vec3 thisSize = size.subtract(directedSize.scale((double) (depth - 1) / (double) depth).add(spacing));
+        size = size.subtract(directedSize.scale((double) 1 / (double) depth));
 
-        if (usedSize.length() == 0)
+        if (usedSize.length() == 0) {
             usedSize = thisSize.add(spacing);
-        else
+        } else {
             usedSize = usedSize.add(thisSize.multiply(direction)).add(spacing);
-
+        }
 
         // TODO: Ensure this texture offset is correct
         Vec3 modifier = thisSize.multiply(direction);
-        textureModifier = new Vec2((float)(modifier.x + modifier.z), (float)modifier.y);
+        textureModifier = new Vec2((float) (modifier.x + modifier.z), (float) modifier.y);
 
         return thisSize;
     }
 
-    public Vec3 getRotationPoint()
-    {
+    public Vec3 getRotationPoint() {
         return rotationPoint;
     }
 
-    public Vec2 getTextureModifier()
-    {
+    public Vec2 getTextureModifier() {
         return textureModifier;
     }
 
-    public resizeModule nextLevel()
-    {
+    public resizeModule nextLevel() {
         depth -= 1;
 
         // SLIGHTLY increase delta so that overlapping textures don't bug out
@@ -119,33 +108,31 @@ public class defaultResizeModule implements resizeModule
         return this;
     }
 
-    public boolean continueResizing()
-    {
-        if (depth == 1)
+    public boolean continueResizing() {
+        if (depth == 1) {
             return false;
+        }
 
         return true;
     }
 
-    public Vec3 getOriginalSize() {return usedSize; }
+    public Vec3 getOriginalSize() {
+        return usedSize;
+    }
 
-    public Vec3 getSpacing()
-    {
+    public Vec3 getSpacing() {
         return spacing;
     }
 
-    public float getDelta()
-    {
+    public float getDelta() {
         return delta;
     }
 
-    public Direction getTop()
-    {
+    public Direction getTop() {
         return top;
     }
 
-    public Direction getBottom()
-    {
+    public Direction getBottom() {
         return bottom;
     }
 }

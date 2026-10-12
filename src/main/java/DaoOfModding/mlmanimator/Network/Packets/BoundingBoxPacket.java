@@ -11,75 +11,65 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-    public class BoundingBoxPacket extends Packet
-    {
-        Vector3f minSize;
-        Vector3f maxSize;
+public class BoundingBoxPacket extends Packet {
 
-        public BoundingBoxPacket(Vector3f min, Vector3f max)
-        {
-            minSize = min;
-            maxSize = max;
-        }
+    Vector3f minSize;
+    Vector3f maxSize;
 
-        @Override
-        public void encode(FriendlyByteBuf buffer)
-        {
-            buffer.writeFloat(minSize.x());
-            buffer.writeFloat(minSize.y());
-            buffer.writeFloat(minSize.z());
-            buffer.writeFloat(maxSize.x());
-            buffer.writeFloat(maxSize.y());
-            buffer.writeFloat(maxSize.z());
-        }
+    public BoundingBoxPacket(Vector3f min, Vector3f max) {
+        minSize = min;
+        maxSize = max;
+    }
 
-        public static BoundingBoxPacket decode(FriendlyByteBuf buffer)
-        {
-            BoundingBoxPacket returnValue = new BoundingBoxPacket(null, null);
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
+        buffer.writeFloat(minSize.x());
+        buffer.writeFloat(minSize.y());
+        buffer.writeFloat(minSize.z());
+        buffer.writeFloat(maxSize.x());
+        buffer.writeFloat(maxSize.y());
+        buffer.writeFloat(maxSize.z());
+    }
 
-            try
-            {
-                // Read in the sent values
-                Vector3f min = new Vector3f(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
-                Vector3f max = new Vector3f(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
+    public static BoundingBoxPacket decode(FriendlyByteBuf buffer) {
+        BoundingBoxPacket returnValue = new BoundingBoxPacket(null, null);
 
-                return new BoundingBoxPacket(min, max);
+        try {
+            // Read in the sent values
+            Vector3f min = new Vector3f(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
+            Vector3f max = new Vector3f(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
 
-            }
-            catch (IllegalArgumentException | IndexOutOfBoundsException e)
-            {
-                mlmanimator.LOGGER.warn("Exception while reading BoundingBox message: " + e);
-                return returnValue;
-            }
-        }
+            return new BoundingBoxPacket(min, max);
 
-        // Read the packet received over the network
-        public void handle(Supplier<NetworkEvent.Context> ctxSupplier)
-        {
-            NetworkEvent.Context ctx = ctxSupplier.get();
-            LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
-            ctx.setPacketHandled(true);
-
-            if (sideReceived.isClient())
-            {
-                mlmanimator.LOGGER.warn("BoundingBoxPacket was received by client - This should not happen");
-                return;
-            }
-
-            // Check to ensure that the packet has valid data values
-            if (minSize == null)
-            {
-                mlmanimator.LOGGER.warn("BoundingBoxPacket was invalid: " + this.toString());
-                return;
-            }
-
-            ctx.enqueueWork(() -> processPacket(ctx.getSender()));
-        }
-
-        // Process received packet on the Server
-        protected void processPacket(ServerPlayer sender)
-        {
-            MultiLimbedDimensions dimensions = new MultiLimbedDimensions(minSize, maxSize);
-            ServerBoundingBoxHandler.setDimensions(sender.getUUID(), dimensions);
+        } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+            mlmanimator.LOGGER.warn("Exception while reading BoundingBox message: " + e);
+            return returnValue;
         }
     }
+
+    // Read the packet received over the network
+    public void handle(Supplier<NetworkEvent.Context> ctxSupplier) {
+        NetworkEvent.Context ctx = ctxSupplier.get();
+        LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
+        ctx.setPacketHandled(true);
+
+        if (sideReceived.isClient()) {
+            mlmanimator.LOGGER.warn("BoundingBoxPacket was received by client - This should not happen");
+            return;
+        }
+
+        // Check to ensure that the packet has valid data values
+        if (minSize == null) {
+            mlmanimator.LOGGER.warn("BoundingBoxPacket was invalid: " + this.toString());
+            return;
+        }
+
+        ctx.enqueueWork(() -> processPacket(ctx.getSender()));
+    }
+
+    // Process received packet on the Server
+    protected void processPacket(ServerPlayer sender) {
+        MultiLimbedDimensions dimensions = new MultiLimbedDimensions(minSize, maxSize);
+        ServerBoundingBoxHandler.setDimensions(sender.getUUID(), dimensions);
+    }
+}

@@ -14,8 +14,8 @@ import net.minecraft.core.particles.ParticleOptions;
 import com.mojang.math.Matrix4f;
 import net.minecraft.world.phys.Vec3;
 
-public class ParticleEmitter extends ExtendableModelRenderer
-{
+public class ParticleEmitter extends ExtendableModelRenderer {
+
     protected ParticleOptions particle;
     protected int interval = 0;
 
@@ -24,20 +24,17 @@ public class ParticleEmitter extends ExtendableModelRenderer
 
     protected int tick = 0;
 
-    public ParticleEmitter(ParticleOptions particleType, String name)
-    {
+    public ParticleEmitter(ParticleOptions particleType, String name) {
         super(name);
 
         particle = particleType;
     }
 
-    public void setInterval(int tickInterval)
-    {
+    public void setInterval(int tickInterval) {
         interval = tickInterval;
     }
 
-    public void setVelocity(Vec3 newVelocity)
-    {
+    public void setVelocity(Vec3 newVelocity) {
         Velocity = newVelocity;
     }
 
@@ -45,39 +42,35 @@ public class ParticleEmitter extends ExtendableModelRenderer
     // Don't draw any model for a particle emitter
     @Override
     protected void compile(PoseStack.Pose PoseStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) { }*/
-
     @Override
-    public void tick(AbstractClientPlayer player)
-    {
+    public void tick(AbstractClientPlayer player) {
         // Do nothing if this emitter is disabled
-        if (!mPart.visible)
+        if (!mPart.visible) {
             return;
+        }
 
-        if (tick >= interval)
-        {
+        if (tick >= interval) {
             spawnParticle(player, particle);
             tick = 0;
-        }
-        else
+        } else {
             tick++;
+        }
     }
 
-    public void spawnParticle(Player player, ParticleOptions toSpawn)
-    {
+    public void spawnParticle(Player player, ParticleOptions toSpawn) {
         // Rotate spawnPos based on player rotation
-        Vec3 pos = PlayerUtils.rotateAroundY(spawnPos.scale(1.0/16.0), 360-player.yBodyRot);
+        Vec3 pos = PlayerUtils.rotateAroundY(spawnPos.scale(1.0 / 16.0), 360 - player.yBodyRot);
         pos = pos.add(player.position());
 
         pos = new Vec3(pos.x, pos.y + PoseHandler.getPlayerPoseHandler(player.getUUID()).getPlayerModel().getHeightAdjustment(), pos.z);
 
-        Vec3 vel = PlayerUtils.rotateAroundY(Velocity, 360-player.yBodyRot);
+        Vec3 vel = PlayerUtils.rotateAroundY(Velocity, 360 - player.yBodyRot);
 
         Minecraft.getInstance().particleEngine.createParticle(toSpawn, pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
     }
 
     @Override
-    public MultiLimbedDimensions calculateMinHeight(PoseStack PoseStackIn, double yRot)
-    {
+    public MultiLimbedDimensions calculateMinHeight(PoseStack PoseStackIn, double yRot) {
         // Update the position of this model first
         updatePosition();
 
@@ -93,8 +86,9 @@ public class ParticleEmitter extends ExtendableModelRenderer
         spawnPos = new Vec3(vector4f.x(), -vector4f.y(), -vector4f.z());
 
         // Calculate the min height of children
-        for (ExtendableModelRenderer testChild : child)
+        for (ExtendableModelRenderer testChild : child) {
             testChild.calculateMinHeight(PoseStackIn, yRot);
+        }
 
         PoseStackIn.popPose();
 
@@ -102,8 +96,7 @@ public class ParticleEmitter extends ExtendableModelRenderer
     }
 
     @Override
-    public ExtendableModelRenderer clone()
-    {
+    public ExtendableModelRenderer clone() {
         ParticleEmitter copy = new ParticleEmitter(particle, name);
         copy.setParent(parent);
 
@@ -126,14 +119,17 @@ public class ParticleEmitter extends ExtendableModelRenderer
         copy.defaultResize = defaultResize;
         copy.thisDelta = thisDelta;
 
-        for (ExtendableModelRenderer children : child)
+        for (ExtendableModelRenderer children : child) {
             copy.addChild(children.clone());
+        }
 
-        for (Quad quad : quads)
+        for (Quad quad : quads) {
             copy.addQuad(quad);
+        }
 
-        for (QuadLinkage link : quadLinkage)
+        for (QuadLinkage link : quadLinkage) {
             copy.addQuadLinkage(link);
+        }
 
         return copy;
     }
