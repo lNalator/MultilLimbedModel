@@ -5,7 +5,7 @@ plugins {
 }
 
 version = '0.2.2'
-group = 'DaoOfModding.mlmanimator' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'lnalator.mlmanimator' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'mlmanimator'
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
@@ -152,7 +152,7 @@ jar {
         attributes([
                 "Specification-Title"     : "mlmanimator",
                 "Specification-Vendor"    : "lNalator",
-                "Specification-Version"   : "0.2.0", // We are version 1 of ourselves
+                "Specification-Version"   : "0.2.2", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "lNalator",
