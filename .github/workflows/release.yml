@@ -31,22 +31,22 @@ jobs:
       - name: Build the mod
         run: bash ./gradlew clean build --no-daemon --console=plain
 
-      - name: Check whether this version is already released
+      - name: Prepare a release for a new version
         id: release
         uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
-            const gradle = fs.readFileSync('build.gradle', 'utf8');
-            const version = gradle.match(/^version\s*=\s*'([^']+)'/m)?.[1];
+            const properties = fs.readFileSync('gradle.properties', 'utf8');
+            const version = properties.match(/^mod_version\s*=\s*(\S+)\s*$/m)?.[1];
             if (!version || !/^\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?$/.test(version)) {
-              throw new Error("Set a valid version = 'x.y.z' in build.gradle.");
+              throw new Error('Set a valid mod_version in gradle.properties.');
             }
             const tag = `v${version}`;
             try {
               const { data } = await github.rest.repos.getReleaseByTag({ ...context.repo, tag });
               if (data.draft) throw new Error(`${tag} has an unfinished draft. Review it before retrying.`);
-              core.info(`${tag} is already published. Bump version in build.gradle for the next release.`);
+              core.info(`${tag} is already published. Bump mod_version for the next release.`);
               return;
             } catch (error) {
               if (error.status !== 404) throw error;
@@ -58,11 +58,18 @@ jobs:
             } catch (error) {
               if (error.status !== 404) throw error;
             }
+            const lines = fs.readFileSync('CHANGELOG.md', 'utf8').split(/\r?\n/);
+            const start = lines.findIndex(line => line.startsWith(`## [${version}]`));
+            if (start < 0) throw new Error(`Add ## [${version}] to CHANGELOG.md.`);
+            const end = lines.findIndex((line, index) => index > start && line.startsWith('## '));
+            const notes = lines.slice(start + 1, end < 0 ? undefined : end).join('\n').trim();
+            if (!notes) throw new Error(`The changelog for ${version} is empty.`);
             const jar = `build/libs/mlmanimator-${version}.jar`;
             const bytes = fs.readFileSync(jar);
             if (!bytes.length) throw new Error('The release jar is empty.');
             const checksum = require('crypto').createHash('sha256').update(bytes).digest('hex');
             fs.writeFileSync(`${jar}.sha256`, `${checksum}  mlmanimator-${version}.jar\n`);
+            fs.writeFileSync('build/RELEASE_NOTES.md', `${notes}\n`);
             core.setOutput('version', version);
             core.setOutput('publish', 'true');
 
@@ -73,7 +80,7 @@ jobs:
           tag_name: v${{ steps.release.outputs.version }}
           target_commitish: ${{ github.sha }}
           name: MLM Animator ${{ steps.release.outputs.version }}
-          generate_release_notes: true
+          body_path: build/RELEASE_NOTES.md
           prerelease: ${{ contains(steps.release.outputs.version, '-') }}
           fail_on_unmatched_files: true
           files: |

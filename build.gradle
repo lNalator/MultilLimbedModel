@@ -4,7 +4,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '5.1.+'
 }
 
-version = '0.2.2'
+version = project.property('mod_version')
 group = 'lnalator.mlmanimator' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'mlmanimator'
 
@@ -152,9 +152,9 @@ jar {
         attributes([
                 "Specification-Title"     : "mlmanimator",
                 "Specification-Vendor"    : "lNalator",
-                "Specification-Version"   : "0.2.2", // We are version 1 of ourselves
+                "Specification-Version"   : "${version}",
                 "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Version"  : "${version}",
                 "Implementation-Vendor"   : "lNalator",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
