@@ -51,10 +51,10 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
+            property 'forge.enabledGameTestNamespaces', 'mlmanimator'
 
             mods {
-                examplemod {
+                mlmanimator {
                     source sourceSets.main
                 }
             }
@@ -67,10 +67,10 @@ minecraft {
 
             property 'forge.logging.console.level', 'debug'
 
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
+            property 'forge.enabledGameTestNamespaces', 'mlmanimator'
 
             mods {
-                examplemod {
+                mlmanimator {
                     source sourceSets.main
                 }
             }
@@ -86,10 +86,10 @@ minecraft {
 
             property 'forge.logging.console.level', 'debug'
 
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
+            property 'forge.enabledGameTestNamespaces', 'mlmanimator'
 
             mods {
-                examplemod {
+                mlmanimator {
                     source sourceSets.main
                 }
             }
@@ -103,10 +103,10 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', 'mlmanimator', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
-                examplemod {
+                mlmanimator {
                     source sourceSets.main
                 }
             }
