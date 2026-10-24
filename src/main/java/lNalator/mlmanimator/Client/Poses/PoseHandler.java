@@ -22,7 +22,7 @@ public class PoseHandler {
     public static boolean setupPoseHandler(AbstractClientPlayer player) {
         // Do nothing if pose handler for this player already exists
         for (PlayerPoseHandler handler : poses) {
-            if (handler.getID() == player.getUUID()) {
+            if (handler.getID().equals(player.getUUID())) {
                 return true;
             }
         }
@@ -58,12 +58,19 @@ public class PoseHandler {
 
     public static PlayerPoseHandler getPlayerPoseHandler(UUID playerID) {
         for (PlayerPoseHandler handler : poses) {
-            if (handler.getID() == playerID) {
+            if (handler.getID().equals(playerID)) {
                 return handler;
             }
         }
 
         return null;
+    }
+
+    // 0 for a player whose pose handler isn't set up yet (a remote player not rendered so far, or a skin still loading)
+    public static float getHeightAdjustment(UUID playerID) {
+        PlayerPoseHandler handler = getPlayerPoseHandler(playerID);
+
+        return handler == null ? 0 : handler.getPlayerModel().getHeightAdjustment();
     }
 
     public static void applyRotations(Player entityLiving, PoseStack PoseStackIn, float rotationYaw, float partialTicks) {
