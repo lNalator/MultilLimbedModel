@@ -86,7 +86,7 @@ public class ClientListeners {
             //if (event.player.getUUID().compareTo(Minecraft.getInstance().player.getUUID()) == 0)
             // If player is crawling
             if (event.player.hasPose(Pose.SWIMMING) && !event.player.isSwimming()) {
-                Boolean crawlNoCollision = event.player.level.noCollision(event.player, event.player.getBoundingBox());
+                Boolean crawlNoCollision = event.player.level().noCollision(event.player, event.player.getBoundingBox());
 
                 // If player doesn't NEED to crawl then cancel the crawl
                 if (crawlNoCollision && !handler.isCrawling()) {
@@ -218,8 +218,9 @@ public class ClientListeners {
 
     @SubscribeEvent
     // Toggle off the third person boolean so that the camera will still render in first person
-    public static void renderWorldLast(RenderLevelLastEvent event) {
-        if (Minecraft.getInstance().level == null) {
+    public static void renderWorldLast(RenderLevelStageEvent event) {
+        // Was RenderLevelLastEvent, removed in 1.20
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL || Minecraft.getInstance().level == null) {
             return;
         }
 

@@ -1,5 +1,6 @@
 package lNalator.mlmanimator.Server;
 
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -30,7 +31,7 @@ public class ServerListeners {
         ServerBoundingBoxHandler.updateDimensions(event.player);
 
         if (event.phase == TickEvent.Phase.END) {
-            Boolean noCollision = event.player.level.noCollision(event.player, event.player.getBoundingBox());
+            Boolean noCollision = event.player.level().noCollision(event.player, event.player.getBoundingBox());
 
             if (event.player.hasPose(Pose.SWIMMING) && !event.player.isSwimming()) {
                 // If the player is crawling and doesn't have to be, set to be standing
@@ -42,7 +43,7 @@ public class ServerListeners {
                     }
 
                     // Maybe pointless?
-                    event.player.getEntityData().clearDirty();
+                    event.player.getEntityData().packDirty();
 
                     ServerBoundingBoxHandler.updateDimensions(event.player);
                 }
@@ -63,8 +64,8 @@ public class ServerListeners {
 
     @SubscribeEvent
     public static void onPlayerHurtInitial(LivingAttackEvent event) {
-        if (event.getEntity() instanceof Player && !event.getEntity().level.isClientSide) {
-            if (event.getSource() == DamageSource.IN_WALL) {
+        if (event.getEntity() instanceof Player && !event.getEntity().level().isClientSide) {
+            if (event.getSource().is(DamageTypes.IN_WALL)) {
                 // Cancel random instances of damage caused by hitbox changes
                 if (!event.getEntity().horizontalCollision && !event.getEntity().verticalCollision) {
                     event.setCanceled(true);

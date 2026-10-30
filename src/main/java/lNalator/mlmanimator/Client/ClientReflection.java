@@ -4,7 +4,7 @@ import lNalator.mlmanimator.mlmanimator;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -33,7 +33,8 @@ public class ClientReflection {
         bobView = ObfuscationReflectionHelper.findMethod(GameRenderer.class, "m_109138_", PoseStack.class, float.class);
         bobHurt = ObfuscationReflectionHelper.findMethod(GameRenderer.class, "m_109117_", PoseStack.class, float.class);
 
-        shaderLightDirections = ObfuscationReflectionHelper.findField(RenderSystem.class, "f_157150_");
+        // Not obfuscated since 1.20 (was f_157150_)
+        shaderLightDirections = ObfuscationReflectionHelper.findField(RenderSystem.class, "shaderLightDirections");
     }
 
     // Check if the lighting is setup for rending an entity in the inventory

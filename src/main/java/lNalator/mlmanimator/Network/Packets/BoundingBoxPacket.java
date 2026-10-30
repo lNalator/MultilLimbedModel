@@ -3,7 +3,7 @@ package lNalator.mlmanimator.Network.Packets;
 import lNalator.mlmanimator.Client.Models.MultiLimbedDimensions;
 import lNalator.mlmanimator.Server.ServerBoundingBoxHandler;
 import lNalator.mlmanimator.mlmanimator;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.LogicalSide;

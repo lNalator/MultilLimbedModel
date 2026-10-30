@@ -1,5 +1,6 @@
 package lNalator.mlmanimator.Client.Models;
 
+import com.mojang.math.Axis;
 import lNalator.mlmanimator.Client.Models.Quads.Quad;
 import lNalator.mlmanimator.Client.Models.Quads.QuadLinkage;
 import lNalator.mlmanimator.Client.MultiLimbedRenderer;
@@ -7,9 +8,9 @@ import lNalator.mlmanimator.Client.AnimationFramework.resizeModule;
 import lNalator.mlmanimator.Common.PlayerUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -635,7 +636,7 @@ public class ExtendableModelRenderer {
 
         for (Vector3f point : points) {
             Vector4f vector4f = new Vector4f(point.x() * (float) resize.x, point.y() * (float) resize.y, point.z() * (float) resize.z, 1.0F);
-            vector4f.transform(rotator);
+            vector4f.mul(rotator);
 
             // Rotate this part to be facing the same direction as the body
             point = new Vector3f(vector4f.x(), vector4f.y(), vector4f.z());
@@ -694,7 +695,7 @@ public class ExtendableModelRenderer {
             Vec3 position = translateRelativePosition(relativePos);
 
             Vector4f position4f = new Vector4f((float) position.x, (float) position.y, (float) position.z, 1);
-            position4f.transform(rotator);
+            position4f.mul(rotator);
 
             link.updatePos(new Vec3(position4f.x(), position4f.y(), position4f.z()));
         }
@@ -708,7 +709,7 @@ public class ExtendableModelRenderer {
         modelMidPoint = modelMidPoint.subtract(getDefaultSize().multiply(getResize().scale(0.5)));
 
         Vector4f vector4f = new Vector4f((float) modelMidPoint.x(), (float) modelMidPoint.y(), (float) modelMidPoint.z(), 1.0F);
-        vector4f.transform(rotator);
+        vector4f.mul(rotator);
 
         return vector4f.y();
     }
@@ -717,7 +718,7 @@ public class ExtendableModelRenderer {
     public float getTopPoint(PoseStack PoseStackIn) {
         Matrix4f rotator = PoseStackIn.last().pose();
         Vector4f vector4f = new Vector4f(mPart.x, mPart.y, mPart.z, 1.0F);
-        vector4f.transform(rotator);
+        vector4f.mul(rotator);
 
         return vector4f.y();
     }
@@ -747,15 +748,15 @@ public class ExtendableModelRenderer {
 
         PoseStackIn.translate(mPart.x, mPart.y, mPart.z);
         if (mPart.zRot != 0.0F) {
-            PoseStackIn.mulPose(Vector3f.ZP.rotation(mPart.zRot));
+            PoseStackIn.mulPose(Axis.ZP.rotation(mPart.zRot));
         }
 
         if (mPart.yRot != 0.0F) {
-            PoseStackIn.mulPose(Vector3f.YP.rotation(mPart.yRot));
+            PoseStackIn.mulPose(Axis.YP.rotation(mPart.yRot));
         }
 
         if (mPart.xRot != 0.0F) {
-            PoseStackIn.mulPose(Vector3f.XP.rotation(mPart.xRot));
+            PoseStackIn.mulPose(Axis.XP.rotation(mPart.xRot));
         }
 
         mPart.xRot -= rotationOffset.x;
@@ -770,15 +771,15 @@ public class ExtendableModelRenderer {
 
         PoseStackIn.translate(mPart.x, mPart.y, mPart.z);
         if (rotation.z != 0.0F) {
-            PoseStackIn.mulPose(Vector3f.ZP.rotation((float) rotation.z));
+            PoseStackIn.mulPose(Axis.ZP.rotation((float) rotation.z));
         }
 
         if (rotation.y != 0.0F) {
-            PoseStackIn.mulPose(Vector3f.YP.rotation((float) rotation.y));
+            PoseStackIn.mulPose(Axis.YP.rotation((float) rotation.y));
         }
 
         if (rotation.x != 0.0F) {
-            PoseStackIn.mulPose(Vector3f.XP.rotation((float) rotation.x));
+            PoseStackIn.mulPose(Axis.XP.rotation((float) rotation.x));
         }
 
         mPart.xRot -= rotationOffset.x;

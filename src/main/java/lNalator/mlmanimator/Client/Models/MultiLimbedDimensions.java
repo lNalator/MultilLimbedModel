@@ -3,7 +3,7 @@ package lNalator.mlmanimator.Client.Models;
 import lNalator.mlmanimator.Client.MultiLimbedRenderer;
 import lNalator.mlmanimator.Common.PlayerUtils;
 import lNalator.mlmanimator.mlmanimator;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -34,8 +34,8 @@ public class MultiLimbedDimensions extends EntityDimensions {
     public MultiLimbedDimensions(MultiLimbedDimensions copy) {
         super(copy.getSmallestWidth(), copy.getHeight(), true);
 
-        minSize = copy.minSize.copy();
-        maxSize = copy.maxSize.copy();
+        minSize = new Vector3f(copy.minSize);
+        maxSize = new Vector3f(copy.maxSize);
     }
 
     public void increaseHeight(float amount) {
@@ -94,23 +94,23 @@ public class MultiLimbedDimensions extends EntityDimensions {
 
     public void updateSize(Vector3f point) {
         if (minSize.x() > point.x()) {
-            minSize.setX(point.x());
+            minSize.x = point.x();
         }
         if (minSize.y() < point.y()) {
-            minSize.setY(point.y());
+            minSize.y = point.y();
         }
         if (minSize.z() > point.z()) {
-            minSize.setZ(point.z());
+            minSize.z = point.z();
         }
 
         if (maxSize.x() < point.x()) {
-            maxSize.setX(point.x());
+            maxSize.x = point.x();
         }
         if (maxSize.y() > point.y()) {
-            maxSize.setY(point.y());
+            maxSize.y = point.y();
         }
         if (maxSize.z() < point.z()) {
-            maxSize.setZ(point.z());
+            maxSize.z = point.z();
         }
     }
 
@@ -129,10 +129,10 @@ public class MultiLimbedDimensions extends EntityDimensions {
     }
 
     public void scaleValuesExceptY(float value) {
-        maxSize.setX(maxSize.x() * value);
-        maxSize.setZ(maxSize.z() * value);
-        minSize.setX(minSize.x() * value);
-        minSize.setZ(minSize.z() * value);
+        maxSize.x = maxSize.x() * value;
+        maxSize.z = maxSize.z() * value;
+        minSize.x = minSize.x() * value;
+        minSize.z = minSize.z() * value;
     }
 
     public Vec3 getMidPoint() {

@@ -196,14 +196,14 @@ public class MultiLimbedRenderer {
     }
 
     public static void doPose(AbstractClientPlayer entityIn, float partialTicks, PlayerPoseHandler handler) {
-        boolean noCollision = entityIn.level.noCollision(entityIn, entityIn.getBoundingBox());
+        boolean noCollision = entityIn.level().noCollision(entityIn, entityIn.getBoundingBox());
 
         PoseHandler.doPose(entityIn.getUUID(), partialTicks);
 
         handler.getPlayerModel().calculateHeightAdjustment(entityIn);
 
         // If the new pose causes a collision then cancel the pose change
-        if (noCollision && !entityIn.level.noCollision(entityIn, entityIn.getBoundingBox())) {
+        if (noCollision && !entityIn.level().noCollision(entityIn, entityIn.getBoundingBox())) {
             PoseHandler.revertPose(entityIn.getUUID());
             handler.getPlayerModel().calculateHeightAdjustment(entityIn);
             handler.collision = true;

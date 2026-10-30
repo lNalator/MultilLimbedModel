@@ -5,14 +5,14 @@ import lNalator.mlmanimator.Client.Models.TextureHandler;
 import lNalator.mlmanimator.Client.MultiLimbedRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.ArrayList;
@@ -178,10 +178,10 @@ public class Quad {
                     }
 
                     Vector3f floatingNormal = new Vector3f((float) normal[i].x, (float) normal[i].y, (float) normal[i].z);
-                    floatingNormal.transform(stackNormal);
+                    floatingNormal.mul(stackNormal);
 
                     Vector4f floatingPos = new Vector4f((float) quadPos[i].x / 16, (float) quadPos[i].y / 16, (float) quadPos[i].z / 16, 1f);
-                    floatingPos.transform(stackPose);
+                    floatingPos.mul(stackPose);
 
                     vertexBuilder.vertex(floatingPos.x(), floatingPos.y(), floatingPos.z(), (float) color.x(), (float) color.y(), (float) color.z(), alpha, UV.u(), UV.v(), packedOverlayIn, packedLightIn, floatingNormal.x(), floatingNormal.y(), floatingNormal.z());
                 }

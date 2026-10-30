@@ -4,7 +4,7 @@ import lNalator.mlmanimator.Network.Packets.BoundingBoxPacket;
 import lNalator.mlmanimator.Network.Packets.CrawlingPacket;
 import lNalator.mlmanimator.Network.Packets.EyeHeightPacket;
 import lNalator.mlmanimator.mlmanimator;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;

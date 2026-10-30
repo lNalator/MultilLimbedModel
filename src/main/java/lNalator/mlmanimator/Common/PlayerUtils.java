@@ -1,7 +1,7 @@
 package lNalator.mlmanimator.Common;
 
 import lNalator.mlmanimator.Client.Poses.PoseHandler;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.player.Player;
@@ -24,7 +24,7 @@ public class PlayerUtils {
     public static Vec3 getDelta(Player player) {
         Vec3 currentMotion = player.getDeltaMovement();
 
-        if (player.level.isClientSide) {
+        if (player.level().isClientSide) {
             currentMotion = PoseHandler.getPlayerPoseHandler(player.getUUID()).getDeltaMovement();
         }
 

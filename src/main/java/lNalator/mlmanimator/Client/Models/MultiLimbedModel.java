@@ -1,13 +1,15 @@
 package lNalator.mlmanimator.Client.Models;
 
+import net.minecraft.world.entity.animal.Parrot;
+import com.mojang.math.Axis;
 import lNalator.mlmanimator.Client.MultiLimbedRenderer;
 import lNalator.mlmanimator.Common.Reflection;
 import lNalator.mlmanimator.Network.PacketHandler;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ParrotModel;
 import net.minecraft.client.model.SkullModelBase;
@@ -15,7 +17,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.ParrotRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -399,13 +401,13 @@ public class MultiLimbedModel {
         }
 
         if (player.getShoulderEntityLeft().getString("id").equals("minecraft:parrot")) {
-            leftShoulder = parrot.renderType(ParrotRenderer.PARROT_LOCATIONS[player.getShoulderEntityLeft().getInt("Variant")]);
+            leftShoulder = parrot.renderType(ParrotRenderer.getVariantTexture(Parrot.Variant.byId(player.getShoulderEntityLeft().getInt("Variant"))));
         } else {
             leftShoulder = null;
         }
 
         if (player.getShoulderEntityRight().getString("id").equals("minecraft:parrot")) {
-            rightShoulder = parrot.renderType(ParrotRenderer.PARROT_LOCATIONS[player.getShoulderEntityRight().getInt("Variant")]);
+            rightShoulder = parrot.renderType(ParrotRenderer.getVariantTexture(Parrot.Variant.byId(player.getShoulderEntityRight().getInt("Variant"))));
         } else {
             rightShoulder = null;
         }
@@ -496,11 +498,11 @@ public class MultiLimbedModel {
         }
 
         // Move the player so they are not colliding with anything
-        if (handleCollisions && bbchange && !player.level.noCollision(player, player.getBoundingBox())) {
+        if (handleCollisions && bbchange && !player.level().noCollision(player, player.getBoundingBox())) {
             VoxelShape voxelshape = Shapes.create(player.getBoundingBox());
             Vec3 vec3 = player.position().add(0.0D, (double) size.getHeight() / 2.0D, 0.0D);
 
-            player.level.findFreePosition(player, voxelshape, vec3, size.getWidth(), size.getHeight(), size.getDepth()).ifPresent((p_185956_) -> {
+            player.level().findFreePosition(player, voxelshape, vec3, size.getWidth(), size.getHeight(), size.getDepth()).ifPresent((p_185956_) -> {
                 player.setPos(p_185956_.add(0.0D, (double) (-size.getHeight()) / 2.0D, 0.0D));
             });
         }
@@ -581,8 +583,8 @@ public class MultiLimbedModel {
         Vec3 pos = getViewPoint().translateRelativePosition(new Vec3(-0.5f, 1.5f, 1.5f));
         PoseStackIn.translate((double) (pos.x / 16.0F), (double) (pos.y / 16.0F), (double) (pos.z / 16.0F));
 
-        PoseStackIn.mulPose(Vector3f.ZP.rotation((float) Math.toRadians(180f)));
-        PoseStackIn.mulPose(Vector3f.YP.rotation((float) Math.toRadians(180f)));
+        PoseStackIn.mulPose(Axis.ZP.rotation((float) Math.toRadians(180f)));
+        PoseStackIn.mulPose(Axis.YP.rotation((float) Math.toRadians(180f)));
 
         SkullBlockRenderer.renderSkull(null, 180.0F, red, PoseStackIn, renderTypeBuffer, packedLightIn, skullmodelbase, skullrendertype);
 
@@ -636,9 +638,9 @@ public class MultiLimbedModel {
 
         //TODO: FIX THIS
         // Transform the camera based depending on which hand is holding the item
-        ItemTransforms.TransformType cameraTransform = ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND;
+        ItemDisplayContext cameraTransform = ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
         if (left) {
-            cameraTransform = ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND;
+            cameraTransform = ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
         }
 
         // If the item being held is a used spyglass, attach to the head instead
@@ -650,8 +652,8 @@ public class MultiLimbedModel {
         }
 
         // Turn the item around to fit in the hand
-        PoseStackIn.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
-        PoseStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+        PoseStackIn.mulPose(Axis.XP.rotationDegrees(-90.0F));
+        PoseStackIn.mulPose(Axis.YP.rotationDegrees(180.0F));
 
         PoseStackIn.scale((float) itemScale.x, (float) itemScale.y, (float) itemScale.z);
 
@@ -671,7 +673,7 @@ public class MultiLimbedModel {
         stack2.translate(move.x, move.y, move.z);
 
         Vector4f testVec = new Vector4f(0f, 0f, 0f, 1f);
-        testVec.transform(stack2.last().pose());
+        testVec.mul(stack2.last().pose());
 
         eyeHeight = testVec.y() - getHeightAdjustment() - (float) (getViewPoint().getSize().y() * 0.3f);
 

@@ -2,10 +2,10 @@ package lNalator.mlmanimator.Client.Models;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -87,8 +87,8 @@ public class ExtendableCube {
             if (isVisable(j)) {
                 Polygon texturedquad = polygons[j];
 
-                Vector3f normals = texturedquad.normal.copy();
-                normals.transform(normalMatrix);
+                Vector3f normals = new Vector3f(texturedquad.normal);
+                normals.mul(normalMatrix);
                 float f = normals.x();
                 float f1 = normals.y();
                 float f2 = normals.z();
@@ -102,7 +102,7 @@ public class ExtendableCube {
                     float f5 = vertex.z() / 16.0F * (float) resize.z + vertices[i].repos.z() / 16.0f;
 
                     Vector4f vector4f = new Vector4f(f3, f4, f5, 1.0F);
-                    vector4f.transform(matrix4f);
+                    vector4f.mul(matrix4f);
 
                     bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertices[i].u, vertices[i].v, packedOverlayIn, packedLightIn, f, f1, f2);
                 }

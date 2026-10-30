@@ -697,7 +697,7 @@ public class PlayerPoseHandler {
         lockLegPose(GenericPoses.Idle);
 
         // Tell the PoseHandler that the player is not jumping if they are on the ground or in water
-        if (player.isOnGround() || player.isInWater()) {
+        if (player.onGround() || player.isInWater()) {
             setJumping(false);
         }//  Otherwise check if the player is jumping
         else if (!isJumping()) {
@@ -747,11 +747,11 @@ public class PlayerPoseHandler {
                 addPose(GenericPoses.Jumping);
             }
         } // If player is moving add the walking pose to the PoseHandler
-        else if ((player.isOnGround() || player.isInWater()) && (getDeltaMovement().x != 0 || getDeltaMovement().z != 0)) {
+        else if ((player.onGround() || player.isInWater()) && (getDeltaMovement().x != 0 || getDeltaMovement().z != 0)) {
             addPose(GenericPoses.getWalkingPose(player));
         }
 
-        if (player.isCrouching() && !player.isSwimming() && (player.isOnGround() || !player.isInWater())) {
+        if (player.isCrouching() && !player.isSwimming() && (player.onGround() || !player.isInWater())) {
             lockLegPose(GenericPoses.Crouching);
 
             if (getDeltaMovement().x != 0 || getDeltaMovement().z != 0) {
@@ -876,7 +876,7 @@ public class PlayerPoseHandler {
         double yLook = 1 - getDeltaMovement().normalize().y;
         double xLook = 0;
 
-        if (player.isOnGround()) {
+        if (player.onGround()) {
             yLook = 1.1;
         }
 

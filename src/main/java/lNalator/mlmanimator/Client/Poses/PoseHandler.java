@@ -1,5 +1,6 @@
 package lNalator.mlmanimator.Client.Poses;
 
+import com.mojang.math.Axis;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -8,7 +9,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ public class PoseHandler {
     public static void applyRotations(Player entityLiving, PoseStack PoseStackIn, float rotationYaw, float partialTicks) {
         Pose pose = entityLiving.getPose();
         if (pose != Pose.SLEEPING) {
-            PoseStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F - rotationYaw));
+            PoseStackIn.mulPose(Axis.YP.rotationDegrees(180.0F - rotationYaw));
         }
 
         if (entityLiving.deathTime > 0) {
@@ -86,13 +87,13 @@ public class PoseHandler {
                 f = 1.0F;
             }
 
-            PoseStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * 90.0F));
+            PoseStackIn.mulPose(Axis.ZP.rotationDegrees(f * 90.0F));
         } else if (pose == Pose.SLEEPING) {
             Direction direction = entityLiving.getBedOrientation();
             float f1 = direction != null ? getFacingAngle(direction) : rotationYaw;
-            PoseStackIn.mulPose(Vector3f.YP.rotationDegrees(f1));
-            PoseStackIn.mulPose(Vector3f.ZP.rotationDegrees(90.0F));
-            PoseStackIn.mulPose(Vector3f.YP.rotationDegrees(270.0F));
+            PoseStackIn.mulPose(Axis.YP.rotationDegrees(f1));
+            PoseStackIn.mulPose(Axis.ZP.rotationDegrees(90.0F));
+            PoseStackIn.mulPose(Axis.YP.rotationDegrees(270.0F));
         }
     }
 

@@ -6,12 +6,12 @@ import lNalator.mlmanimator.Client.Poses.PoseHandler;
 import lNalator.mlmanimator.Common.PlayerUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector4f;
+import org.joml.Vector4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.particles.ParticleOptions;
-import com.mojang.math.Matrix4f;
+import org.joml.Matrix4f;
 import net.minecraft.world.phys.Vec3;
 
 public class ParticleEmitter extends ExtendableModelRenderer {
@@ -80,7 +80,7 @@ public class ParticleEmitter extends ExtendableModelRenderer {
         Matrix4f rotator = PoseStackIn.last().pose();
 
         Vector4f vector4f = new Vector4f(0, 0, 0, 1);
-        vector4f.transform(rotator);
+        vector4f.mul(rotator);
 
         // Why is x not negative? I have no idea
         spawnPos = new Vec3(vector4f.x(), -vector4f.y(), -vector4f.z());

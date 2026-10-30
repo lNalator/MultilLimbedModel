@@ -1,6 +1,6 @@
 package lNalator.mlmanimator.Client.Models;
 
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
