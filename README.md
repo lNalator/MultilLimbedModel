@@ -61,6 +61,6 @@ some-folder/
 
 `Cultivationcraft/settings.gradle` includes this checkout as a composite build, so a change made here is used the next time you build or run CultivationCraft (`./gradlew runClient` from `Cultivationcraft/`), without publishing anything. Another location can be passed with `-PmlmSourceDir=/path/to/MultilLimbedModel`.
 
-CultivationCraft's release workflow builds against the `v0.2.2` tag of this repository: when a CultivationCraft change needs a new MLM Animator version, tag it, then update the `ref` in `Cultivationcraft/.github/workflows/release.yml` and the `mlmanimator` version range in CultivationCraft's `mods.toml`.
+CultivationCraft's release workflow builds against the `v0.2.3` tag of this repository: when a CultivationCraft change needs a new MLM Animator version, tag it, then update the `ref` in `Cultivationcraft/.github/workflows/release.yml` and the `mlmanimator` version range in CultivationCraft's `mods.toml`.
 
 Changes are listed in [CHANGELOG.md](CHANGELOG.md).
